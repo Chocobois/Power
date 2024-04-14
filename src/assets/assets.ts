@@ -20,6 +20,23 @@ const images: Image[] = [
 	image('titlescreen/background', 'title_background'),
 	image('titlescreen/foreground', 'title_foreground'),
 	image('titlescreen/character', 'title_character'),
+
+	// Robot
+	image('room', 'room'),
+	image('robot', 'robot'),
+	image('card', 'card'),
+	image('rule', 'rule'),
+	image('rule_turn_left', 'rule_turn_left'),
+	image('battery', 'battery'),
+	image('battery_power', 'battery_power'),
+
+	image('move_forward', 'move_forward'),
+	image('move_forward_2', 'move_forward_2'),
+	image('move_forward_3', 'move_forward_3'),
+	image('move_backward', 'move_backward'),
+	image('turn_left', 'turn_left'),
+	image('turn_right', 'turn_right'),
+	image('turn_around', 'turn_around'),
 ];
 
 /* Spritesheets */
@@ -35,7 +52,7 @@ const audios: Audio[] = [
 ];
 
 /* Fonts */
-await loadFont('Sketch', 'Game Font');
+await loadFont('DynaPuff-Medium', 'Game Font');
 
 export {
 	images,

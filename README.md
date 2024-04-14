@@ -1,4 +1,4 @@
-# Chocobois Game Jam Template
+# Gamedev.js Jam 2024 - Power
 
 We make game, but faster
 

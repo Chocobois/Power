@@ -1,5 +1,5 @@
 {
-	"applicationId": "chocobois-jam-template",
+	"applicationId": "power",
 	"version": "1.0.0",
 	"defaultMode": "window",
 	"port": 0,
@@ -15,7 +15,7 @@
 	"nativeAllowList": ["app.exit", "window.center"],
 	"modes": {
 		"window": {
-			"title": "Chocobois Game Jam Template",
+			"title": "Power",
 			"width": 1440,
 			"height": 845,
 			"minWidth": 960,
@@ -33,7 +33,7 @@
 		}
 	},
 	"cli": {
-		"binaryName": "chocobois-jam-template",
+		"binaryName": "power",
 		"resourcesPath": "/dist/",
 		"frontendLibrary": {
 		  "patchFile": "/src/index.html",
