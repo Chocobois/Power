@@ -1,0 +1,43 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+  padding-top: var(--safe-area-inset-top);
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	background: black;
+	color: #eee;
+}
+
+.fontPreloader {
+	display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: -10;
+	margin: auto;
+  font-family: Sans-Serif;
+  font-size: 2.5rem;
+  white-space: nowrap;
+}
+
+body:has(canvas) .fontPreloader {
+  visibility: hidden;
+}

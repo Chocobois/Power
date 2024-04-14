@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "Node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"skipLibCheck": true,
+		"removeComments": true,
+		"stripInternal": true,
+		"allowJs": true,
+		"strictPropertyInitialization": false,
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["src", "typings"],
+	"exclude": ["node_modules"]
+}

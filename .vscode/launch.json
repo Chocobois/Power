@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Vite DEV server",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite"],
+      "type": "node",
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "pattern": "localhost:.*m([0-9]+)",
+        "uriFormat": "http://localhost:%s"
+      }
+    }
+  ]
+}

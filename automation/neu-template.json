@@ -1,0 +1,44 @@
+{
+	"applicationId": "chocobois-jam-template",
+	"version": "1.0.0",
+	"defaultMode": "window",
+	"port": 0,
+	"documentRoot": "/dist/web/",
+	"url": "/",
+	"enableServer": true,
+	"enableNativeAPI": true,
+	"tokenSecurity": "one-time",
+	"logging": {
+		"enabled": true,
+		"writeToLogFile": false
+	},
+	"nativeAllowList": ["app.exit", "window.center"],
+	"modes": {
+		"window": {
+			"title": "Chocobois Game Jam Template",
+			"width": 1440,
+			"height": 845,
+			"minWidth": 960,
+			"minHeight": 570,
+			"fullScreen": false,
+			"alwaysOnTop": false,
+			"icon": "src/public/icon.png",
+			"enableInspector": false,
+			"borderless": false,
+			"maximize": false,
+			"hidden": false,
+			"resizable": true,
+			"exitProcessOnClose": false,
+			"useSavedState": false
+		}
+	},
+	"cli": {
+		"binaryName": "chocobois-jam-template",
+		"resourcesPath": "/dist/",
+		"frontendLibrary": {
+		  "patchFile": "/src/index.html",
+		  "devUrl": "http://localhost:5173",
+		  "projectPath": "/"
+		}
+	}
+}

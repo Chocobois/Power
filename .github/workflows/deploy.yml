@@ -1,0 +1,75 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install && sudo apt install genisoimage
+
+      - name: Load game.config.json
+        uses: antifree/json-to-variables@v1.1.2
+        with:
+          filename: 'game.config.json'
+          prefix: game
+
+      - name: Build project
+        run: npm run build
+
+      - name: Load meta.json
+        uses: antifree/json-to-variables@v1.1.2
+        with:
+          filename: 'dist/meta.json'
+          prefix: meta
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/web
+
+      - name: Create release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "${{ env.game_title }} latest build"
+          files: |
+            ./dist/${{ env.meta_title }}-web.zip
+            ./dist/${{ env.meta_title }}-win.zip
+            ./dist/${{ env.meta_title }}-mac.dmg
+            ./dist/${{ env.meta_title }}-linux.zip
+
+      - name: Upload to Itch
+        if: ${{env.game_itch_upload  == 'true'}}
+        uses: Ayowel/butler-to-itch@v1.0.0
+        with:
+          butler_key: ${{ secrets.BUTLER_CREDENTIALS }}
+          itch_user: ${{ env.game_itch_username }}
+          itch_game: ${{ env.game_itch_game }}
+          files: |
+            ./dist/${{ env.meta_title }}-web.zip
+            ./dist/${{ env.meta_title }}-win.zip
+            ./dist/${{ env.meta_title }}-mac.dmg
+            ./dist/${{ env.meta_title }}-linux.zip
+          auto_channel: true
+          butler_version: "latest"
+          check_signature: false

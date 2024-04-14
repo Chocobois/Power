@@ -1,0 +1,13 @@
+{
+	"team": "Chocobois",
+	"title": "Game Jam Template",
+	"description": "We make game, but faster!",
+	"itch": {
+		"upload": false,
+		"username": "username",
+		"game": "game-name"
+	},
+	"neutralino": {
+		"allow": ["app.exit", "window.center"]
+	}
+}
