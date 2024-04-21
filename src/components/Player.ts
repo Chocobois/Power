@@ -14,6 +14,7 @@ enum Face {
 
 export class Player extends Phaser.GameObjects.Container {
 	public scene: GameScene;
+	public power: number;
 	public cell: Phaser.Math.Vector2;
 
 	private size: number;
@@ -35,6 +36,7 @@ export class Player extends Phaser.GameObjects.Container {
 		scene.add.existing(this);
 		this.scene = scene;
 
+		this.power = 10;
 		this.cell = new Phaser.Math.Vector2();
 
 		this.size = cellSize;
@@ -70,6 +72,8 @@ export class Player extends Phaser.GameObjects.Container {
 	}
 
 	update(time: number, delta: number) {
+		if (!this.alive) return;
+
 		let squish = Math.sin((4 * time) / 1000);
 		// let f = this.size / this.head.width;
 		// this.wheels.setScale(f - 0.01 * squish, f + 0.01 * squish);
@@ -200,9 +204,27 @@ export class Player extends Phaser.GameObjects.Container {
 		);
 	}
 
-	reset() {
+	drain() {
 		this.isActive = false;
-		this.blink(Face.Forward);
+		this.power--;
+
+		if (this.power > 2) {
+			this.blink(Face.Forward);
+		} else {
+			this.blink(Face.Low, 1500);
+			this.scene.tweens.addCounter({
+				duration: 800,
+				delay: 100,
+				from: 0,
+				to: 6,
+				onUpdate: (tween, target, key, current: number) => {
+					this.eyes.setVisible(current % 2 < 1);
+				},
+				onComplete: () => {
+					this.eyes.setVisible(this.power > 0);
+				},
+			});
+		}
 	}
 
 	getFacing() {
@@ -210,5 +232,9 @@ export class Player extends Phaser.GameObjects.Container {
 			dx: Math.round(Math.cos(this.angle * Phaser.Math.DEG_TO_RAD)),
 			dy: Math.round(Math.sin(this.angle * Phaser.Math.DEG_TO_RAD)),
 		};
+	}
+
+	get alive(): boolean {
+		return this.power > 0;
 	}
 }

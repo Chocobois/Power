@@ -13,8 +13,6 @@ export class GameScene extends BaseScene {
 	private deck: Deck;
 	private ui: UI;
 
-	private power: number;
-
 	constructor() {
 		super({ key: "GameScene" });
 	}
@@ -22,8 +20,6 @@ export class GameScene extends BaseScene {
 	create(): void {
 		this.fade(false, 200, 0x000000);
 		this.cameras.main.setBackgroundColor(Color.Slate100);
-
-		this.power = 10;
 
 		// this.background = this.add.image(0, 0, "background");
 		// this.background.setOrigin(0);
@@ -46,7 +42,7 @@ export class GameScene extends BaseScene {
 		this.deck.on("action", this.performAction, this);
 
 		this.ui = new UI(this);
-		this.ui.setPower(this.power);
+		this.ui.setPower(this.player.power);
 	}
 
 	update(time: number, delta: number) {
@@ -128,8 +124,7 @@ export class GameScene extends BaseScene {
 	}
 
 	drainBattery() {
-		this.player.reset();
-		this.power--;
-		this.ui.setPower(this.power);
+		this.player.drain();
+		this.ui.setPower(this.player.power);
 	}
 }
