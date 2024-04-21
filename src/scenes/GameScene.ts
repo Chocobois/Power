@@ -32,7 +32,7 @@ export class GameScene extends BaseScene {
 		const startX = 3;
 		const startY = 0;
 
-		this.player = new Player(this, this.CX, this.CY);
+		this.player = new Player(this, this.CX, this.CY, this.grid.cellSize);
 		let cell = this.grid.getPosition(startX, startY);
 		this.player.angle += 90;
 		this.player.setPosition(cell.x, cell.y);
@@ -69,7 +69,8 @@ export class GameScene extends BaseScene {
 					this.player.cell.y = nextY;
 					this.player.move(
 						this.player.x + dx * this.grid.grid.cellWidth,
-						this.player.y + dy * this.grid.grid.cellHeight
+						this.player.y + dy * this.grid.grid.cellHeight,
+						true
 					);
 
 					this.addEvent(500, () => {
@@ -78,7 +79,8 @@ export class GameScene extends BaseScene {
 				} else {
 					this.player.bump(
 						this.player.x + 0.25 * dx * this.grid.grid.cellWidth,
-						this.player.y + 0.25 * dy * this.grid.grid.cellHeight
+						this.player.y + 0.25 * dy * this.grid.grid.cellHeight,
+						true
 					);
 				}
 				break;
@@ -93,7 +95,8 @@ export class GameScene extends BaseScene {
 					this.player.cell.y = prevY;
 					this.player.move(
 						this.player.x + dx * this.grid.grid.cellWidth,
-						this.player.y + dy * this.grid.grid.cellHeight
+						this.player.y + dy * this.grid.grid.cellHeight,
+						false
 					);
 
 					this.addEvent(500, () => {
@@ -102,7 +105,8 @@ export class GameScene extends BaseScene {
 				} else {
 					this.player.bump(
 						this.player.x + 0.25 * dx * this.grid.grid.cellWidth,
-						this.player.y + 0.25 * dy * this.grid.grid.cellHeight
+						this.player.y + 0.25 * dy * this.grid.grid.cellHeight,
+						false
 					);
 				}
 				break;
@@ -122,6 +126,7 @@ export class GameScene extends BaseScene {
 	}
 
 	drainBattery() {
+		this.player.reset();
 		this.power--;
 		this.ui.setPower(this.power);
 	}
