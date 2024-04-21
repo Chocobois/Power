@@ -12,8 +12,7 @@
 	},
 	"dependencies": {
 		"@neutralinojs/lib": "^5.1.0",
-		"phaser": "^3.80.1",
-		"phaser3-rex-plugins": "^1.80.2"
+		"phaser": "^3.80.1"
 	},
 	"devDependencies": {
 		"@electron/asar": "^3.2.9",
