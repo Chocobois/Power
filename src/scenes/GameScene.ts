@@ -54,7 +54,6 @@ export class GameScene extends BaseScene {
 
 	performAction(action: string) {
 		let { dx, dy } = this.player.getFacing();
-		console.log(action, this.player.cell.x, this.player.cell.y, dx, dy);
 
 		switch (action) {
 			case "move_forward":
@@ -75,6 +74,7 @@ export class GameScene extends BaseScene {
 						this.grid.clean(nextX, nextY);
 					});
 				} else {
+					this.deck.failMove();
 					this.player.bump(
 						this.player.x + 0.25 * dx * this.grid.grid.cellWidth,
 						this.player.y + 0.25 * dy * this.grid.grid.cellHeight,
@@ -101,6 +101,7 @@ export class GameScene extends BaseScene {
 						this.grid.clean(prevX, prevY);
 					});
 				} else {
+					this.deck.failMove();
 					this.player.bump(
 						this.player.x + 0.25 * dx * this.grid.grid.cellWidth,
 						this.player.y + 0.25 * dy * this.grid.grid.cellHeight,

@@ -58,6 +58,7 @@ export class Deck extends Phaser.GameObjects.Container {
 	private button: Button;
 
 	private activeCardIndex: number;
+	private activeMultiCard: boolean;
 
 	constructor(scene: GameScene) {
 		super(scene);
@@ -72,6 +73,7 @@ export class Deck extends Phaser.GameObjects.Container {
 		}
 
 		this.activeCardIndex = 0;
+		this.activeMultiCard = false;
 		this.cards = [];
 
 		this.button = new Button(this.scene, this.scene.CX, this.scene.H - 80);
@@ -136,6 +138,7 @@ export class Deck extends Phaser.GameObjects.Container {
 
 	execute() {
 		this.activeCardIndex = 0;
+		this.activeMultiCard = false;
 		this.cards.sort((a, b) => a.x - b.x);
 		this.button.setVisible(false);
 		this.scene.addEvent(500, this.activateCard, this);
@@ -153,10 +156,13 @@ export class Deck extends Phaser.GameObjects.Container {
 		card.setAlpha(1.0);
 
 		if (card.action == "move_forward_3") {
+			this.activeMultiCard = true;
 			card.action = "move_forward_2";
 		} else if (card.action == "move_forward_2") {
+			this.activeMultiCard = true;
 			card.action = "move_forward";
 		} else {
+			this.activeMultiCard = false;
 			this.activeCardIndex++;
 		}
 
@@ -164,6 +170,13 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.scene.addEvent(1050, () => {
 			this.activateCard();
 		});
+	}
+
+	failMove() {
+		if (this.activeMultiCard) {
+			this.activeMultiCard = false;
+			this.activeCardIndex++;
+		}
 	}
 
 	reset() {
