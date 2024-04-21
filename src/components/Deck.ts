@@ -114,15 +114,17 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.cards.forEach((card) => this.bringToTop(card));
 		this.cards.forEach((card, index) => {
 			if (!card.hold) {
-				card.x = this.cardSlots[index].x;
+				card.target.x = this.cardSlots[index].x;
 			}
 			let k = (card.x - this.scene.CX) / this.scene.CX;
 			card.angle = k * 20;
-			card.y = 0.8 * this.scene.H - 50 * Math.cos(k * Math.PI);
+			card.target.y = 0.8 * this.scene.H - 50 * Math.cos(k * Math.PI);
 			if (card.hold) {
 				this.bringToTop(card);
-				card.y -= 50;
+				card.target.y -= 100;
 			}
+
+			card.update(time, delta);
 		});
 
 		this.bringToTop(this.button);
@@ -159,7 +161,7 @@ export class Deck extends Phaser.GameObjects.Container {
 		}
 
 		this.emit("action", card.action);
-		this.scene.addEvent(1000, () => {
+		this.scene.addEvent(1050, () => {
 			this.activateCard();
 		});
 	}
@@ -171,7 +173,11 @@ export class Deck extends Phaser.GameObjects.Container {
 
 		do {
 			Phaser.Math.RND.shuffle(cardData);
-		} while (cardData.slice(0, cardCount).filter(data => data.image.startsWith("turn")).length > 3); // Max 3 turn cards
+		} while (
+			cardData
+				.slice(0, cardCount)
+				.filter((data) => data.image.startsWith("turn")).length > 3
+		); // Max 3 turn cards
 
 		for (let i = 0; i < cardCount; i++) {
 			let x = this.cardSlots[i].x;

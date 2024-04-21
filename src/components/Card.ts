@@ -9,6 +9,7 @@ export class Card extends Button {
 	private icon: Phaser.GameObjects.Sprite;
 	private text: Phaser.GameObjects.Text;
 
+	public target: Phaser.Math.Vector2;
 	private dragOffset: Phaser.Math.Vector2;
 
 	constructor(
@@ -40,11 +41,14 @@ export class Card extends Button {
 		this.add(this.text);
 
 		this.dragOffset = new Phaser.Math.Vector2();
+		this.target = new Phaser.Math.Vector2();
 
 		this.bindInteractive(this.card, true);
 	}
 
 	update(time: number, delta: number) {
+		this.x += 0.5 * (this.target.x - this.x);
+		this.y += 0.5 * (this.target.y - this.y);
 	}
 
 	onDragStart() {
@@ -55,7 +59,7 @@ export class Card extends Button {
 	}
 
 	onDrag() {
-		this.x = this.scene.input.activePointer.x - this.dragOffset.x;
+		this.target.x = this.scene.input.activePointer.x - this.dragOffset.x;
 		// this.y = this.scene.input.activePointer.y - this.dragOffset.y;
 	}
 
