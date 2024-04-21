@@ -3,6 +3,7 @@ import { Player } from "@/components/Player";
 import { UI } from "@/components/UI";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
+import { Color } from "@/assets/colors";
 import { level1 } from "@/components/levels";
 
 export class GameScene extends BaseScene {
@@ -20,7 +21,7 @@ export class GameScene extends BaseScene {
 
 	create(): void {
 		this.fade(false, 200, 0x000000);
-		this.cameras.main.setBackgroundColor(0xffffff);
+		this.cameras.main.setBackgroundColor(Color.Slate100);
 
 		this.power = 10;
 
