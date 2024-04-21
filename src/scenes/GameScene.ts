@@ -3,6 +3,7 @@ import { Player } from "@/components/Player";
 import { UI } from "@/components/UI";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
+import { level1 } from "@/components/levels";
 
 export class GameScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
@@ -27,7 +28,7 @@ export class GameScene extends BaseScene {
 		// this.background.setOrigin(0);
 		// this.fitToScreen(this.background);
 
-		this.grid = new Grid(this, this.CX, 350);
+		this.grid = new Grid(this, this.CX, 350, 600, level1);
 
 		const startX = 3;
 		const startY = 0;

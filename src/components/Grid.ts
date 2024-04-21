@@ -1,73 +1,92 @@
 import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
-
-const WIDTH = 6;
-const HEIGHT = 4;
-const SIZE = 150;
+import { Color } from "@/assets/colors";
 
 export class Grid extends Phaser.GameObjects.Container {
 	public scene: GameScene;
 
+	public rows: number;
+	public columns: number;
+	public cellSize: number;
+
 	// Sprites
 	public available: boolean[][];
 	public grid: Phaser.GameObjects.Grid;
-	public dirt: Phaser.GameObjects.Rectangle[][];
+	public cells: Phaser.GameObjects.Rectangle[][];
 
-	constructor(scene: GameScene, x: number, y: number) {
+	constructor(
+		scene: GameScene,
+		x: number,
+		y: number,
+		height: number,
+		level: number[][]
+	) {
 		super(scene, x, y);
 		scene.add.existing(this);
 		this.scene = scene;
 
+		this.columns = level.length;
+		this.rows = level[0].length;
+		this.height = height;
+		this.width = height * (this.rows / this.columns);
+		this.cellSize = height / this.columns;
+
 		this.grid = this.scene.add.grid(
 			0,
 			0,
-			WIDTH * SIZE,
-			HEIGHT * SIZE,
-			SIZE,
-			SIZE,
-			0x0000ff,
-			0.25,
-			0x000077,
-			0.5
+			this.width,
+			this.height,
+			this.cellSize,
+			this.cellSize,
+			0xffffff,
+			1.0,
+			0x000000,
+			1.0
 		);
 		this.add(this.grid);
 
 		this.available = [];
-		for (let y = 0; y < HEIGHT; y++) {
+		for (let y = 0; y < this.columns; y++) {
 			this.available[y] = [];
-			for (let x = 0; x < WIDTH; x++) {
+			for (let x = 0; x < this.rows; x++) {
 				this.available[y].push(true);
 			}
 		}
 
-		this.dirt = [];
-		for (let y = 0; y < HEIGHT; y++) {
-			this.dirt[y] = [];
-			for (let x = 0; x < WIDTH; x++) {
+		this.cells = [];
+		for (let y = 0; y < this.columns; y++) {
+			this.cells[y] = [];
+			for (let x = 0; x < this.rows; x++) {
 				let pos = this.getPosition(x, y);
 				let rect = this.scene.add.rectangle(
 					pos.x - this.x,
 					pos.y - this.y,
-					SIZE,
-					SIZE,
-					0x773300,
+					this.cellSize - 4,
+					this.cellSize - 4,
+					Color.Amber800,
 					0.5
 				);
-				this.dirt[y].push(rect);
+				this.cells[y].push(rect);
 				this.add(rect);
+
+				if (level[y][x] == 1) {
+					this.block(x, y);
+				}
 			}
 		}
 
 		let background = this.scene.add.image(0, 0, "room");
+		// let background = this.scene.add.image(this.x, this.y, "room");
+		// background.setDepth(10);
 		this.add(background);
 
-		this.block(1, 0);
-		this.block(2, 0);
-		this.block(1, 2);
-		this.block(5, 0);
-		this.block(5, 2);
-		this.block(4, 3);
-		this.block(5, 3);
+		// this.block(1, 0);
+		// this.block(2, 0);
+		// this.block(1, 2);
+		// this.block(5, 0);
+		// this.block(5, 2);
+		// this.block(4, 3);
+		// this.block(5, 3);
 	}
 
 	update(time: number, delta: number) {}
@@ -82,15 +101,16 @@ export class Grid extends Phaser.GameObjects.Container {
 
 	block(cx: number, cy: number) {
 		this.available[cy][cx] = false;
-		this.clean(cx, cy);
+		this.cells[cy][cx].fillColor = Color.Red500;
+		this.cells[cy][cx].fillAlpha = 1.0;
 	}
 
 	clean(cx: number, cy: number) {
-		this.dirt[cy][cx].destroy();
+		this.cells[cy][cx].fillColor = 0xffffff;
 	}
 
 	isInside(cx: number, cy: number) {
-		return cx >= 0 && cx < WIDTH && cy >= 0 && cy < HEIGHT;
+		return cx >= 0 && cx < this.rows && cy >= 0 && cy < this.columns;
 	}
 
 	isAvailable(cx: number, cy: number) {
