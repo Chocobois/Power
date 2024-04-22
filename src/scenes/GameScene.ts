@@ -27,12 +27,12 @@ export class GameScene extends BaseScene {
 		// this.background.setOrigin(0);
 		// this.fitToScreen(this.background);
 
-		this.grid = new Grid(this, this.CX, 350, 600, level1);
+		this.grid = new Grid(this, this.CX, 400, 480, level1);
 
 		const startX = 3;
 		const startY = 0;
 
-		this.player = new Player(this, this.CX, this.CY, this.grid.cellSize);
+		this.player = new Player(this, this.CX, this.CY, this.grid.cellHeight);
 		let cell = this.grid.getPosition(startX, startY);
 		this.player.angle += 90;
 		this.player.setPosition(cell.x, cell.y);

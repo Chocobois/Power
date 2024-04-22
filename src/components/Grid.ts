@@ -7,11 +7,14 @@ export class Grid extends Phaser.GameObjects.Container {
 
 	public rows: number;
 	public columns: number;
-	public cellSize: number;
+	public cellWidth: number;
+	public cellHeight: number;
 
 	// Sprites
 	public available: boolean[][];
+	public walls: Phaser.GameObjects.NineSlice;
 	public grid: Phaser.GameObjects.Grid;
+	public floor: Phaser.GameObjects.TileSprite;
 	public cells: Phaser.GameObjects.Rectangle[][];
 
 	constructor(
@@ -28,16 +31,17 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.columns = level.length;
 		this.rows = level[0].length;
 		this.height = height;
-		this.width = height * (this.rows / this.columns);
-		this.cellSize = height / this.columns;
+		this.width = height * (this.rows / this.columns) * (4 / 3);
+		this.cellWidth = this.width / this.rows;
+		this.cellHeight = this.height / this.columns;
 
 		this.grid = this.scene.add.grid(
 			0,
 			0,
 			this.width,
 			this.height,
-			this.cellSize,
-			this.cellSize,
+			this.cellWidth,
+			this.cellHeight,
 			0xffffff,
 			1.0,
 			0x000000,
@@ -53,6 +57,26 @@ export class Grid extends Phaser.GameObjects.Container {
 			}
 		}
 
+		let outside = this.scene.add.tileSprite(
+			scene.CX - this.x,
+			scene.CY - this.y,
+			(scene.W / this.cellWidth) * 256,
+			(scene.H / this.cellHeight) * 192,
+			"outside"
+		);
+		outside.setScale(this.cellWidth / 256);
+		this.add(outside);
+
+		this.floor = this.scene.add.tileSprite(
+			0,
+			0,
+			this.rows * 256,
+			this.columns * 192,
+			"floor"
+		);
+		this.floor.setScale(this.cellWidth / 256);
+		this.add(this.floor);
+
 		this.cells = [];
 		for (let y = 0; y < this.columns; y++) {
 			this.cells[y] = [];
@@ -61,10 +85,10 @@ export class Grid extends Phaser.GameObjects.Container {
 				let rect = this.scene.add.rectangle(
 					pos.x - this.x,
 					pos.y - this.y,
-					this.cellSize - 4,
-					this.cellSize - 4,
+					this.cellWidth,
+					this.cellHeight,
 					Color.Amber800,
-					0.5
+					0.25
 				);
 				this.cells[y].push(rect);
 				this.add(rect);
@@ -75,18 +99,25 @@ export class Grid extends Phaser.GameObjects.Container {
 			}
 		}
 
-		let background = this.scene.add.image(0, 0, "room");
+		this.walls = scene.add.nineslice(
+			0,
+			-this.cellHeight / 2,
+			"walls",
+			0,
+			(this.rows + 2) * 256,
+			(this.columns + 3) * 192,
+			2 * 256,
+			2 * 256,
+			3 * 192,
+			2 * 192
+		);
+		this.walls.setScale(this.cellWidth / 256);
+		this.add(this.walls);
+
+		// let background = this.scene.add.image(0, 0, "room");
 		// let background = this.scene.add.image(this.x, this.y, "room");
 		// background.setDepth(10);
-		this.add(background);
-
-		// this.block(1, 0);
-		// this.block(2, 0);
-		// this.block(1, 2);
-		// this.block(5, 0);
-		// this.block(5, 2);
-		// this.block(4, 3);
-		// this.block(5, 3);
+		// this.add(background);
 	}
 
 	update(time: number, delta: number) {}
@@ -101,8 +132,14 @@ export class Grid extends Phaser.GameObjects.Container {
 
 	block(cx: number, cy: number) {
 		this.available[cy][cx] = false;
-		this.cells[cy][cx].fillColor = Color.Red500;
-		this.cells[cy][cx].fillAlpha = 1.0;
+		// this.cells[cy][cx].fillColor = Color.Red500;
+		// this.cells[cy][cx].fillAlpha = 1.0;
+
+        const pos = this.getPosition(cx, cy);
+        const key = Phaser.Math.RND.pick(["box", "plant"]);
+        let item = this.scene.add.image(pos.x, pos.y, key);
+        item.setOrigin(0.5, 0.75);
+        item.setScale(this.cellWidth / 256);
 	}
 
 	clean(cx: number, cy: number) {
