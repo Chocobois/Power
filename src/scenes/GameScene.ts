@@ -1,6 +1,7 @@
 import { BaseScene } from "@/scenes/BaseScene";
 import { Player } from "@/components/Player";
 import { UI } from "@/components/UI";
+import { DJ } from "@/components/DJ";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
 import { Color } from "@/assets/colors";
@@ -12,6 +13,7 @@ export class GameScene extends BaseScene {
 	private player: Player;
 	private deck: Deck;
 	private ui: UI;
+	private dj: DJ;
 
 	constructor() {
 		super({ key: "GameScene" });
@@ -38,18 +40,23 @@ export class GameScene extends BaseScene {
 		this.grid.clean(startX, startY);
 
 		this.deck = new Deck(this);
-		this.deck.on("newRound", this.drainBattery, this);
+		this.deck.on("newRound", this.newRound, this);
 		this.deck.on("action", this.performAction, this);
 
 		this.ui = new UI(this);
 		this.ui.setPower(this.player.power);
+
+		this.dj = new DJ(this);
 	}
 
 	update(time: number, delta: number) {
 		this.grid.update(time, delta);
 		this.player.update(time, delta);
 		this.deck.update(time, delta);
+		this.dj.update(time, delta);
 		this.ui.update(time, delta);
+
+		this.ui.setBatteryBlink(this.dj.barTime, this.player.power);
 	}
 
 	performAction(action: string) {
@@ -122,10 +129,15 @@ export class GameScene extends BaseScene {
 				this.player.rotate(180);
 				break;
 		}
+
+		this.dj.setMoodMovement();
 	}
 
-	drainBattery() {
+	newRound() {
 		this.player.drain();
 		this.ui.setPower(this.player.power);
+
+		this.dj.setMoodPlanning();
+		this.dj.setMoodPower(this.player.power);
 	}
 }

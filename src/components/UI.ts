@@ -20,15 +20,21 @@ export class UI extends Phaser.GameObjects.Container {
 		this.panel = this.scene.add.container(0, 0);
 		this.add(this.panel);
 
-		this.background = this.scene.add.image(1600, 330, "battery");
+		this.background = this.scene.add.image(1750, 330, "battery");
 		this.add(this.background);
 
-		this.battery = this.scene.add.image(1600, 330, "battery_power");
+		this.battery = this.scene.add.image(1750, 330, "battery_power");
 		this.add(this.battery);
 
 		/* Rule */
 
-		this.ruleCard = new RuleCard(this.scene, 280, 330, "rule_turn_left", "Turn left upon hitting an obstacle");
+		this.ruleCard = new RuleCard(
+			this.scene,
+			180,
+			330,
+			"rule_turn_left",
+			"Turn left upon hitting an obstacle"
+		);
 		this.add(this.ruleCard);
 	}
 
@@ -49,5 +55,12 @@ export class UI extends Phaser.GameObjects.Container {
 		};
 		let cropY = slots[power] ?? 512;
 		this.battery.setCrop(0, cropY, 256, 512);
+	}
+
+	setBatteryBlink(barTime: number, power: number) {
+		// https://www.desmos.com/calculator/epofb3ricb
+		let factor = 1.05 - 0.5 * (barTime % 2) - 0.05 * ((barTime + 1) % 2);
+		let fade = (1 - power / 10) * factor;
+		this.battery.setAlpha(1 - fade);
 	}
 }
