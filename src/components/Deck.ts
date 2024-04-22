@@ -2,10 +2,11 @@ import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
 import { Card } from "./Card";
 import { RoundRectangle } from "./elements/RoundRectangle";
+import { Color } from "@/assets/colors";
 
-export const cardCount = 5;
+export const HAND = 5;
 
-export const cardData = [
+export const DECK = [
 	{
 		image: "move_forward",
 		text: "Move one space forward",
@@ -16,19 +17,19 @@ export const cardData = [
 	},
 	{
 		image: "turn_left",
-		text: "Turn left",
+		text: "Turn 90° counter clockwise",
 	},
 	{
 		image: "turn_left",
-		text: "Turn left",
+		text: "Turn 90° counter clockwise",
 	},
 	{
 		image: "turn_right",
-		text: "Turn right",
+		text: "Turn 90° clockwise",
 	},
 	{
 		image: "turn_right",
-		text: "Turn right",
+		text: "Turn 90° clockwise",
 	},
 
 	{
@@ -66,9 +67,9 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.scene = scene;
 
 		this.cardSlots = [];
-		for (let i = 0; i < cardCount; i++) {
+		for (let i = 0; i < HAND; i++) {
 			this.cardSlots.push({
-				x: this.scene.CX + (i - (cardCount - 1) / 2) * 210,
+				x: this.scene.CX + (i - (HAND - 1) / 2) * 210,
 			});
 		}
 
@@ -83,7 +84,7 @@ export class Deck extends Phaser.GameObjects.Container {
 			width: 200 + 10,
 			height: 80 + 10,
 			radius: 16 + 5,
-			color: 0xffffff,
+			color: Color.White,
 		});
 		this.button.add(buttonBr);
 
@@ -91,7 +92,7 @@ export class Deck extends Phaser.GameObjects.Container {
 			width: 200,
 			height: 80,
 			radius: 16,
-			color: 0x4444ff,
+			color: Color.Blue700,
 		});
 		this.button.add(buttonBg);
 
@@ -120,7 +121,8 @@ export class Deck extends Phaser.GameObjects.Container {
 			}
 			let k = (card.x - this.scene.CX) / this.scene.CX;
 			card.angle = k * 20;
-			card.target.y = 0.8 * this.scene.H - 50 * Math.cos(k * Math.PI);
+			card.target.y = 880 - 50 * Math.cos(k * Math.PI);
+			card.target.y += 4 * Math.sin(time / 1000 + card.x / 200);
 			if (card.hold) {
 				this.bringToTop(card);
 				card.target.y -= 100;
@@ -184,18 +186,18 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.cards = [];
 		this.button.setVisible(true);
 
-		do {
-			Phaser.Math.RND.shuffle(cardData);
-		} while (
-			cardData
-				.slice(0, cardCount)
-				.filter((data) => data.image.startsWith("turn")).length > 3
-		); // Max 3 turn cards
+		const count = (type: string) =>
+			DECK.slice(0, HAND).filter((data) => data.image.startsWith(type)).length;
 
-		for (let i = 0; i < cardCount; i++) {
+		// Shuffle deck to prevent 4+ of the same type of card
+		do {
+			Phaser.Math.RND.shuffle(DECK);
+		} while (count("move") >= 4 || count("turn") >= 4);
+
+		for (let i = 0; i < HAND; i++) {
 			let x = this.cardSlots[i].x;
 			let y = 0.8 * this.scene.H;
-			let data = cardData[i];
+			let data = DECK[i];
 			let card = new Card(this.scene, x, y, data.image, data.text);
 			card.setScale(0.95);
 			this.add(card);
