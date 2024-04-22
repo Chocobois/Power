@@ -77,15 +77,20 @@ export class DJ extends Phaser.GameObjects.Container {
 	}
 
 	setMoodPower(power: number) {
-		let factor = 1 - (power - 1) / 9;
-		this.battery.setVolume(factor * this.volume);
+		if (power > 0) {
+			let factor = 1 - (power - 1) / 9;
+			this.battery.setVolume(factor * this.volume);
+		} else {
+			this.battery.setVolume(0);
+		}
+		this.toggle(this.drums, power > 0);
 	}
 
 	toggle(track: Music, active: boolean) {
 		this.scene.tweens.addCounter({
 			from: track.volume,
 			to: active ? this.volume : 0,
-			duration: 500,
+			duration: 250,
 			ease: Phaser.Math.Easing.Sine.InOut,
 			onUpdate: (tween, target, key, current: number) => {
 				track.setVolume(current);

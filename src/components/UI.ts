@@ -58,8 +58,7 @@ export class UI extends Phaser.GameObjects.Container {
 	}
 
 	setBatteryBlink(barTime: number, power: number) {
-		// https://www.desmos.com/calculator/epofb3ricb
-		let factor = 1.05 - 0.5 * (barTime % 2) - 0.05 * ((barTime + 1) % 2);
+		let factor = 1 - 0.5 * (barTime % 2);
 		let fade = (1 - power / 10) * factor;
 		this.battery.setAlpha(1 - fade);
 	}
