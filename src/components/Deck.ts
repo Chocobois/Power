@@ -3,57 +3,15 @@ import { Button } from "./elements/Button";
 import { Card } from "./Card";
 import { RoundRectangle } from "./elements/RoundRectangle";
 import { Color } from "@/assets/colors";
-
-export const HAND = 5;
-
-export const DECK = [
-	{
-		image: "move_forward",
-		text: "Move one space forward",
-	},
-	{
-		image: "move_forward",
-		text: "Move one space forward",
-	},
-	{
-		image: "turn_left",
-		text: "Turn 90° counter clockwise",
-	},
-	{
-		image: "turn_left",
-		text: "Turn 90° counter clockwise",
-	},
-	{
-		image: "turn_right",
-		text: "Turn 90° clockwise",
-	},
-	{
-		image: "turn_right",
-		text: "Turn 90° clockwise",
-	},
-
-	{
-		image: "move_forward_2",
-		text: "Move 2 spaces forward",
-	},
-	{
-		image: "move_forward_3",
-		text: "Move 3 spaces forward",
-	},
-	{
-		image: "move_backward",
-		text: "Move one space backward",
-	},
-	{
-		image: "turn_around",
-		text: "Turn around 180°",
-	},
-];
+import { Level } from "./levels";
+import { CardData } from "./cards";
 
 export class Deck extends Phaser.GameObjects.Container {
 	public scene: GameScene;
 
-	// Sprites
+	private handSize: number;
+	private deck: CardData[];
+
 	private cardSlots: { x: number }[];
 	private cards: Card[];
 	private button: Button;
@@ -66,12 +24,10 @@ export class Deck extends Phaser.GameObjects.Container {
 		scene.add.existing(this);
 		this.scene = scene;
 
+		this.handSize = 0;
+		this.deck = [];
+
 		this.cardSlots = [];
-		for (let i = 0; i < HAND; i++) {
-			this.cardSlots.push({
-				x: this.scene.CX + (i - (HAND - 1) / 2) * 210,
-			});
-		}
 
 		this.activeCardIndex = 0;
 		this.activeMultiCard = false;
@@ -104,10 +60,9 @@ export class Deck extends Phaser.GameObjects.Container {
 		buttonText.setOrigin(0.5);
 		this.button.add(buttonText);
 
+		this.button.setVisible(false);
 		this.button.bindInteractive(buttonBg);
 		this.button.on("click", this.execute, this);
-
-		this.reset();
 	}
 
 	update(time: number, delta: number) {
@@ -121,6 +76,7 @@ export class Deck extends Phaser.GameObjects.Container {
 			}
 			let k = (card.x - this.scene.CX) / this.scene.CX;
 			card.angle = k * 20;
+			card.angle -= 1 * Math.sin(time / 1000 + card.x / 300);
 			card.target.y = 880 - 50 * Math.cos(k * Math.PI);
 			card.target.y += 4 * Math.sin(time / 1000 + card.x / 200);
 			if (card.hold) {
@@ -132,6 +88,19 @@ export class Deck extends Phaser.GameObjects.Container {
 		});
 
 		this.bringToTop(this.button);
+	}
+
+	startLevel(level: Level) {
+		this.handSize = level.cards;
+		this.deck = level.deck;
+
+		for (let i = 0; i < level.cards; i++) {
+			this.cardSlots.push({
+				x: this.scene.CX + (i - (level.cards - 1) / 2) * 210,
+			});
+		}
+
+		this.newRound();
 	}
 
 	getSequence() {
@@ -149,7 +118,7 @@ export class Deck extends Phaser.GameObjects.Container {
 	activateCard() {
 		if (this.activeCardIndex >= this.cards.length) {
 			this.emit("newRound");
-			return this.reset();
+			return this.newRound();
 		}
 
 		this.cards.forEach((card) => card.setAlpha(0.5));
@@ -181,23 +150,24 @@ export class Deck extends Phaser.GameObjects.Container {
 		}
 	}
 
-	reset() {
+	newRound() {
 		this.cards.forEach((card) => card.destroy());
 		this.cards = [];
 		this.button.setVisible(true);
 
 		const count = (type: string) =>
-			DECK.slice(0, HAND).filter((data) => data.image.startsWith(type)).length;
+			this.deck.slice(0, this.handSize).filter((data) => data.type == type)
+				.length;
 
-		// Shuffle deck to prevent 4+ of the same type of card
+		// Shuffle deck until there are 2+ turn and move
 		do {
-			Phaser.Math.RND.shuffle(DECK);
-		} while (count("move") >= 4 || count("turn") >= 4);
+			Phaser.Math.RND.shuffle(this.deck);
+		} while (count("move") < 2 || count("turn") < 2);
 
-		for (let i = 0; i < HAND; i++) {
+		for (let i = 0; i < this.handSize; i++) {
 			let x = this.cardSlots[i].x;
 			let y = 0.8 * this.scene.H;
-			let data = DECK[i];
+			let data = this.deck[i];
 			let card = new Card(this.scene, x, y, data.image, data.text);
 			card.setScale(0.95);
 			this.add(card);

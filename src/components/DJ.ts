@@ -62,6 +62,10 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.riff.update();
 	}
 
+	setMoodStartLevel() {
+		this.toggle(this.bass, true);
+	}
+
 	setMoodPlanning() {
 		this.toggle(this.chords, false);
 		this.toggle(this.chip, true);

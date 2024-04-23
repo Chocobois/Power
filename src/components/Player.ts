@@ -14,6 +14,7 @@ enum Face {
 
 export class Player extends Phaser.GameObjects.Container {
 	public scene: GameScene;
+	public maxPower: number;
 	public power: number;
 	public cell: Phaser.Math.Vector2;
 
@@ -31,15 +32,16 @@ export class Player extends Phaser.GameObjects.Container {
 	private isActive: boolean;
 	private blinkTimer: Phaser.Time.TimerEvent;
 
-	constructor(scene: GameScene, x: number, y: number, cellSize: number) {
-		super(scene, x, y);
+	constructor(scene: GameScene) {
+		super(scene, 0, 0);
 		scene.add.existing(this);
 		this.scene = scene;
 
+		this.maxPower = 10;
 		this.power = 10;
 		this.cell = new Phaser.Math.Vector2();
 
-		this.size = cellSize;
+		this.size = 256;
 		this.isActive = false;
 
 		this.wheels = this.scene.add.sprite(0, 0, "robot_wheels_1");
@@ -74,6 +76,8 @@ export class Player extends Phaser.GameObjects.Container {
 	update(time: number, delta: number) {
 		if (!this.alive) return;
 
+		this.setDepth(this.y);
+
 		let squish = Math.sin((4 * time) / 1000);
 		// let f = this.size / this.head.width;
 		// this.wheels.setScale(f - 0.01 * squish, f + 0.01 * squish);
@@ -94,9 +98,21 @@ export class Player extends Phaser.GameObjects.Container {
 		}
 	}
 
+	setCellSize(size: number) {
+		this.size = size;
+		this.wheels.setScale(this.size / this.wheels.width);
+		this.hull.setScale(this.size / this.hull.width);
+		this.eyes.setScale(this.size / this.eyes.width);
+	}
+
 	setCell(cx: number, cy: number) {
 		this.cell.x = cx;
 		this.cell.y = cy;
+	}
+
+	setPower(power: number) {
+		this.maxPower = power;
+		this.power = power;
 	}
 
 	move(x: number, y: number, forward: boolean) {

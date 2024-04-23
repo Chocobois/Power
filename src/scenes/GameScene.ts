@@ -5,7 +5,7 @@ import { DJ } from "@/components/DJ";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
 import { Color } from "@/assets/colors";
-import { level1 } from "@/components/levels";
+import { Level, level1, level2 } from "@/components/levels";
 
 export class GameScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
@@ -27,26 +27,17 @@ export class GameScene extends BaseScene {
 		// this.background.setOrigin(0);
 		// this.fitToScreen(this.background);
 
-		this.grid = new Grid(this, this.CX, 400, 480, level1);
-
-		const startX = 3;
-		const startY = 0;
-
-		this.player = new Player(this, this.CX, this.CY, this.grid.cellHeight);
-		let cell = this.grid.getPosition(startX, startY);
-		this.player.angle += 90;
-		this.player.setPosition(cell.x, cell.y);
-		this.player.setCell(startX, startY);
-		this.grid.clean(startX, startY);
-
+		this.grid = new Grid(this, this.CX, 400, 480);
+		this.player = new Player(this);
 		this.deck = new Deck(this);
+		this.ui = new UI(this);
+		this.dj = new DJ(this);
+
+		this.deck.setDepth(2000);
 		this.deck.on("newRound", this.newRound, this);
 		this.deck.on("action", this.performAction, this);
 
-		this.ui = new UI(this);
-		this.ui.setPower(this.player.power);
-
-		this.dj = new DJ(this);
+		this.startLevel(level2);
 	}
 
 	update(time: number, delta: number) {
@@ -57,6 +48,30 @@ export class GameScene extends BaseScene {
 		this.ui.update(time, delta);
 
 		this.ui.setBatteryBlink(this.dj.barTime, this.player.power);
+	}
+
+	startLevel(level: Level) {
+		this.grid.startLevel(level);
+
+		const cx = level.player.x;
+		const cy = level.player.y;
+		this.player.setCell(cx, cy);
+		this.grid.clean(cx, cy);
+
+		let pos = this.grid.getPosition(cx, cy);
+		this.player.setPosition(pos.x, pos.y);
+
+		let size = (this.grid.cellWidth + this.grid.cellHeight) / 2;
+		this.player.setCellSize(size);
+
+		this.player.angle = level.player.angle;
+
+		this.deck.startLevel(level);
+
+		this.player.setPower(level.power);
+		this.ui.setPower(this.player.power);
+
+		this.dj.setMoodStartLevel();
 	}
 
 	performAction(action: string) {
@@ -72,8 +87,8 @@ export class GameScene extends BaseScene {
 					this.player.cell.x = nextX;
 					this.player.cell.y = nextY;
 					this.player.move(
-						this.player.x + dx * this.grid.grid.cellWidth,
-						this.player.y + dy * this.grid.grid.cellHeight,
+						this.player.x + dx * this.grid.cellWidth,
+						this.player.y + dy * this.grid.cellHeight,
 						true
 					);
 
@@ -83,8 +98,8 @@ export class GameScene extends BaseScene {
 				} else {
 					this.deck.failMove();
 					this.player.bump(
-						this.player.x + 0.25 * dx * this.grid.grid.cellWidth,
-						this.player.y + 0.25 * dy * this.grid.grid.cellHeight,
+						this.player.x + 0.25 * dx * this.grid.cellWidth,
+						this.player.y + 0.25 * dy * this.grid.cellHeight,
 						true
 					);
 				}
@@ -99,8 +114,8 @@ export class GameScene extends BaseScene {
 					this.player.cell.x = prevX;
 					this.player.cell.y = prevY;
 					this.player.move(
-						this.player.x + dx * this.grid.grid.cellWidth,
-						this.player.y + dy * this.grid.grid.cellHeight,
+						this.player.x + dx * this.grid.cellWidth,
+						this.player.y + dy * this.grid.cellHeight,
 						false
 					);
 
@@ -110,8 +125,8 @@ export class GameScene extends BaseScene {
 				} else {
 					this.deck.failMove();
 					this.player.bump(
-						this.player.x + 0.25 * dx * this.grid.grid.cellWidth,
-						this.player.y + 0.25 * dy * this.grid.grid.cellHeight,
+						this.player.x + 0.25 * dx * this.grid.cellWidth,
+						this.player.y + 0.25 * dy * this.grid.cellHeight,
 						false
 					);
 				}
