@@ -72,7 +72,7 @@ export class BaseScene extends Phaser.Scene {
 		x = 0,
 		y = 0,
 		size = 12,
-		weight = 500,
+		weight = 700,
 		color = "#FFFFFF",
 		alpha = 1.0,
 		text = "",

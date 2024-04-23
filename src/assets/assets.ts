@@ -68,6 +68,6 @@ const audios: Audio[] = [
 ];
 
 /* Fonts */
-await loadFont("DynaPuff-Medium", "Game Font");
+await loadFont("LexendDeca", "Game Font");
 
 export { images, spritesheets, audios };
