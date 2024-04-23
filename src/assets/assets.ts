@@ -54,11 +54,12 @@ const spritesheets: SpriteSheet[] = [];
 
 /* Audios */
 const audios: Audio[] = [
-	music("bass_melody", "track_bass_melody"),
+	music("bass", "track_bass"),
 	music("battery", "track_battery"),
 	music("chip", "track_chip"),
 	music("chords", "track_chords"),
 	music("drums", "track_drums"),
+	music("melody", "track_melody"),
 	music("riff", "track_riff"),
 
 	music("title", "m_main_menu"),

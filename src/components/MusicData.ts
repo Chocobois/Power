@@ -31,7 +31,7 @@ const Data = {
 		start: 41860 / 48000 + overlap,
 		end: 2854884 / 48000 + overlap,
 	},
-	track_bass_melody: {
+	track_bass: {
 		offset: 0,
 		bpm: 150,
 		loop: true,
@@ -60,6 +60,13 @@ const Data = {
 		end: 3951936 / 44100,
 	},
 	track_drums: {
+		offset: 0,
+		bpm: 150,
+		loop: true,
+		start: 576 / 44100,
+		end: 3951936 / 44100,
+	},
+	track_melody: {
 		offset: 0,
 		bpm: 150,
 		loop: true,

@@ -13,20 +13,22 @@ export class DJ extends Phaser.GameObjects.Container {
 	private chip: Music;
 	private chords: Music;
 	private riff: Music;
+	private melody: Music;
 
 	constructor(scene: GameScene) {
 		super(scene, 0, 0);
 		scene.add.existing(this);
 		this.scene = scene;
 
-		this.volume = 0.3;
+		this.volume = 0.5;
 
-		this.drums = new Music(scene, "track_drums", {});
-		this.bass = new Music(scene, "track_bass_melody", {});
-		this.battery = new Music(scene, "track_battery", {});
-		this.chip = new Music(scene, "track_chip", {});
-		this.chords = new Music(scene, "track_chords", {});
-		this.riff = new Music(scene, "track_riff", {});
+		this.drums = new Music(scene, "track_drums", { volume: 0 });
+		this.bass = new Music(scene, "track_bass", { volume: 0 });
+		this.battery = new Music(scene, "track_battery", { volume: 0 });
+		this.chip = new Music(scene, "track_chip", { volume: 0 });
+		this.chords = new Music(scene, "track_chords", { volume: 0 });
+		this.riff = new Music(scene, "track_riff", { volume: 0 });
+		this.melody = new Music(scene, "track_melody", { volume: 0 });
 
 		this.drums.play();
 		this.bass.play();
@@ -34,23 +36,14 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.chip.play();
 		this.chords.play();
 		this.riff.play();
+		this.melody.play();
 
 		this.drums.setVolume(this.volume);
-		this.bass.setVolume(0);
-		this.battery.setVolume(0);
 		this.chip.setVolume(this.volume);
-		this.chords.setVolume(0);
-		this.riff.setVolume(0);
 
 		// Sync loops
-		this.drums.on("loop", () => {
-			let seek = this.drums.seek;
-			this.bass.setSeek(seek);
-			this.battery.setSeek(seek);
-			this.chip.setSeek(seek);
-			this.chords.setSeek(seek);
-			this.riff.setSeek(seek);
-		});
+		this.drums.on("loop", this.sync, this);
+		this.scene.addEvent(500, this.sync, this);
 	}
 
 	update(time: number, delta: number) {
@@ -60,6 +53,7 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.chip.update();
 		this.chords.update();
 		this.riff.update();
+		this.melody.update();
 	}
 
 	setMoodStartLevel() {
@@ -77,7 +71,7 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.toggle(this.chip, true);
 		this.toggle(this.riff, false);
 
-		this.toggle(this.bass, true);
+		// this.toggle(this.bass, true);
 	}
 
 	setMoodPower(power: number) {
@@ -94,12 +88,22 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.scene.tweens.addCounter({
 			from: track.volume,
 			to: active ? this.volume : 0,
-			duration: 250,
+			duration: 350,
 			ease: Phaser.Math.Easing.Sine.InOut,
 			onUpdate: (tween, target, key, current: number) => {
 				track.setVolume(current);
 			},
 		});
+	}
+
+	sync() {
+		let seek = this.drums.seek;
+		this.bass.setSeek(seek);
+		this.battery.setSeek(seek);
+		this.chip.setSeek(seek);
+		this.chords.setSeek(seek);
+		this.riff.setSeek(seek);
+		this.melody.setSeek(seek);
 	}
 
 	get barTime(): number {
