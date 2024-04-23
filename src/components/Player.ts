@@ -42,7 +42,7 @@ export class Player extends Phaser.GameObjects.Container {
 		this.size = cellSize;
 		this.isActive = false;
 
-		this.wheels = this.scene.add.sprite(0, 0, "wheels");
+		this.wheels = this.scene.add.sprite(0, 0, "robot_wheels_1");
 		this.wheels.setScale(this.size / this.wheels.width);
 		// this.wheels.setAlpha(0.5);
 		this.wheels.setTint(0xbbbbbb);
@@ -52,7 +52,7 @@ export class Player extends Phaser.GameObjects.Container {
 		this.head = this.scene.add.container();
 		this.add(this.head);
 
-		this.hull = this.scene.add.sprite(0, 0, "robot");
+		this.hull = this.scene.add.sprite(0, 0, "robot_head");
 		this.hull.setScale(this.size / this.hull.width);
 		this.hull.setAngle(-90);
 		this.head.add(this.hull);
@@ -84,7 +84,9 @@ export class Player extends Phaser.GameObjects.Container {
 			let dy = Math.abs(this.y - this.prevY);
 			let da = Math.abs(this.angle - this.prevAngle);
 			this.wheelValue += (dx + dy + da) / 15;
-			this.wheels.setTexture(this.wheelValue % 2 < 1 ? "wheels" : "wheels_2");
+			this.wheels.setTexture(
+				this.wheelValue % 2 < 1 ? "robot_wheels_1" : "robot_wheels_2"
+			);
 
 			this.prevX = this.x;
 			this.prevY = this.y;
