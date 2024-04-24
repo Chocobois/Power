@@ -33,7 +33,7 @@ export class UI extends Phaser.GameObjects.Container {
 			180,
 			330,
 			"rule_turn_left",
-			"Turn left upon hitting an obstacle"
+			"Turn 90° counter clockwise upon hitting an obstacle"
 		);
 		this.add(this.ruleCard);
 	}

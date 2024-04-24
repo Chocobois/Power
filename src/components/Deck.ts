@@ -2,9 +2,9 @@ import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
 import { Card } from "./Card";
 import { RoundRectangle } from "./elements/RoundRectangle";
-import { Color } from "@/assets/colors";
+import { Color } from "@/utils/colors";
 import { Level } from "./levels";
-import { CardData } from "./cards";
+import { CardData, CardType } from "./cards";
 
 export class Deck extends Phaser.GameObjects.Container {
 	public scene: GameScene;
@@ -29,7 +29,7 @@ export class Deck extends Phaser.GameObjects.Container {
 
 		this.cardSlots = [];
 
-		this.activeCardIndex = 0;
+		this.activeCardIndex = -1;
 		this.activeMultiCard = false;
 		this.cards = [];
 
@@ -37,9 +37,9 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.add(this.button);
 
 		let buttonBr = new RoundRectangle(this.scene, {
-			width: 200 + 10,
-			height: 80 + 10,
-			radius: 16 + 5,
+			width: 200 + 16,
+			height: 80 + 16,
+			radius: 16 + 8,
 			color: Color.White,
 		});
 		this.button.add(buttonBr);
@@ -79,7 +79,7 @@ export class Deck extends Phaser.GameObjects.Container {
 			card.angle -= 1 * Math.sin(time / 1000 + card.x / 300);
 			card.target.y = 880 - 50 * Math.cos(k * Math.PI);
 			card.target.y += 4 * Math.sin(time / 1000 + card.x / 200);
-			if (card.hold) {
+			if (card.hold || card.highlighted) {
 				this.bringToTop(card);
 				card.target.y -= 100;
 			}
@@ -121,10 +121,10 @@ export class Deck extends Phaser.GameObjects.Container {
 			return this.newRound();
 		}
 
-		this.cards.forEach((card) => card.setAlpha(0.5));
+		this.cards.forEach((card) => card.setHighlight(false));
 
 		let card = this.cards[this.activeCardIndex];
-		card.setAlpha(1.0);
+		card.setHighlight(true);
 
 		if (card.action == "move_forward_3") {
 			this.activeMultiCard = true;
@@ -154,24 +154,31 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.cards.forEach((card) => card.destroy());
 		this.cards = [];
 		this.button.setVisible(true);
+		this.activeCardIndex = -1;
 
-		const count = (type: string) =>
-			this.deck.slice(0, this.handSize).filter((data) => data.type == type)
-				.length;
+		const countType = (type: string) =>
+			this.hand.filter((card) => card.type == type).length;
+		const isBadShuffle = () =>
+			countType(CardType.Move) < 2 || countType(CardType.Turn) < 2;
 
 		// Shuffle deck until there are 2+ turn and move
-		do {
-			Phaser.Math.RND.shuffle(this.deck);
-		} while (count("move") < 2 || count("turn") < 2);
+		let limit = 999;
+		do Phaser.Math.RND.shuffle(this.deck);
+		while (isBadShuffle() && limit--);
+		console.assert(limit > 0, "Infinite loop");
 
 		for (let i = 0; i < this.handSize; i++) {
 			let x = this.cardSlots[i].x;
-			let y = 0.8 * this.scene.H;
+			let y = (1.5 + i) * this.scene.H;
 			let data = this.deck[i];
-			let card = new Card(this.scene, x, y, data.image, data.text);
+			let card = new Card(this.scene, x, y, data.type, data.image, data.text);
 			card.setScale(0.95);
 			this.add(card);
 			this.cards.push(card);
 		}
+	}
+
+	get hand(): CardData[] {
+		return this.deck.slice(0, this.handSize);
 	}
 }

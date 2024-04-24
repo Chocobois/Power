@@ -1,5 +1,6 @@
 import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
+import { Color } from "@/utils/colors";
 
 export class RuleCard extends Button {
 	public scene: GameScene;
@@ -27,11 +28,12 @@ export class RuleCard extends Button {
 		this.add(this.card);
 
 		this.icon = this.scene.add.sprite(0, -this.card.displayHeight / 6, image);
+		this.icon.setTint(Color.Yellow500);
 		this.add(this.icon);
 
 		this.text = this.scene.addText({
 			y: this.card.displayHeight / 6,
-			size: 32,
+			size: 22,
 			color: "black",
 			text,
 		});

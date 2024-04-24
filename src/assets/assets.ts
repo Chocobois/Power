@@ -30,10 +30,11 @@ const images: Image[] = [
 	image("room/decoration/plant", "deco_plant"),
 	image("room/decoration/box", "deco_box"),
 	image("room/walls", "walls"),
-	image("room/walls2", "walls2"),
 
 	// Cards
-	image("cards/card", "card"),
+	image("cards/card_edges", "card_edges"),
+	image("cards/card_surface", "card_surface"),
+	image("cards/card_inner", "card_inner"),
 	image("cards/rule", "rule"),
 	image("cards/move_forward", "move_forward"),
 	image("cards/turn_around", "turn_around"),
