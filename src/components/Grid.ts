@@ -1,6 +1,6 @@
 import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
-import { Color } from "@/assets/colors";
+import { Color } from "@/utils/colors";
 import { Level } from "./levels";
 import { Decoration } from "./decorations";
 

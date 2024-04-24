@@ -4,7 +4,7 @@ import { UI } from "@/components/UI";
 import { DJ } from "@/components/DJ";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
-import { Color } from "@/assets/colors";
+import { Color } from "@/utils/colors";
 import { Level, level1, level2 } from "@/components/levels";
 
 export class GameScene extends BaseScene {
@@ -29,10 +29,10 @@ export class GameScene extends BaseScene {
 
 		this.grid = new Grid(this, this.CX, 400, 480);
 		this.player = new Player(this);
-		this.deck = new Deck(this);
 		this.ui = new UI(this);
 		this.dj = new DJ(this);
 
+		this.deck = new Deck(this);
 		this.deck.setDepth(2000);
 		this.deck.on("newRound", this.newRound, this);
 		this.deck.on("action", this.performAction, this);

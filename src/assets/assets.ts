@@ -1,5 +1,5 @@
-import { Image, SpriteSheet, Audio } from "./util";
-import { image, sound, music, loadFont, spritesheet } from "./util";
+import { Image, SpriteSheet, Audio } from "./assetUtils";
+import { image, sound, music, loadFont } from "./assetUtils";
 
 /* Images */
 const images: Image[] = [
