@@ -1,6 +1,8 @@
-# Gamedev.js Jam 2024 - Power
+# Mech Motion
 
-We make game, but faster
+Made in 2 weeks during [Gamedev.js Jam 2024](https://itch.io/jam/gamedevjs-2024). The theme for this jam is "power".
+
+This project is made using our own [Phaser game jam template](https://github.com/Chocobois/choco-jam-template), which provides a robust build system via GitHub actions and some basic Phaser scenes to get the ball rolling.
 
 ## Quick start
 ### Prerequisites
