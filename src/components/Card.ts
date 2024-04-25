@@ -100,10 +100,6 @@ export class Card extends Button {
 		this.x += f * (this.target.x - this.x);
 		this.y += f * (this.target.y - this.y);
 
-		if (this.type == CardType.Rule) {
-			this.setScale(1.0 - 0.03 * this.holdSmooth);
-		}
-
 		if (this.action == "turn_right") this.icon.angle += delta / 100;
 		if (this.action == "turn_left") this.icon.angle -= delta / 100;
 	}

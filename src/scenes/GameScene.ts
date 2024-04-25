@@ -86,6 +86,12 @@ export class GameScene extends BaseScene {
 		this.ui.setBatteryBlink(this.dj.barTime, this.player.power);
 	}
 
+	setState(state: State) {
+		this.state = state;
+		this.deck.updateState(state);
+		this.dj.setMoodState(state);
+	}
+
 	startLevel(level: Level) {
 		this.setState(State.Planning);
 		this.intermission.fadeToGame(this.player);
@@ -110,6 +116,34 @@ export class GameScene extends BaseScene {
 		this.ui.setPower(this.player.power);
 
 		this.dj.setMoodStartLevel(this.levelIndex);
+		this.dj.setMoodPlanning();
+		this.dj.setMoodPower(this.player.power, this.player.maxPower);
+	}
+
+	newRound() {
+		if (this.state == State.GameOver) {
+			return this.endLevel();
+		}
+
+		this.setState(State.Planning);
+
+		this.player.drain();
+		this.ui.setPower(this.player.power);
+
+		this.dj.setMoodPlanning();
+		this.dj.setMoodPower(this.player.power, this.player.maxPower);
+
+		if (this.player.power <= 0) {
+			this.setState(State.GameOver);
+
+			this.addEvent(1000, () => {
+				this.intermission.fadeToIntermission(this.player, Mode.RestartLevel);
+			});
+		}
+	}
+
+	startExecuting() {
+		this.setState(State.Executing);
 	}
 
 	performAction(action: string) {
@@ -144,6 +178,7 @@ export class GameScene extends BaseScene {
 						this.player.y + 0.25 * dy * this.grid.cellHeight,
 						this.rule.getRule()
 					);
+					this.rule.flash();
 				}
 				break;
 
@@ -171,6 +206,7 @@ export class GameScene extends BaseScene {
 						this.player.y + 0.25 * dy * this.grid.cellHeight,
 						this.rule.getRule()
 					);
+					this.rule.flash();
 				}
 				break;
 
@@ -188,38 +224,6 @@ export class GameScene extends BaseScene {
 		}
 
 		this.dj.setMoodMovement();
-	}
-
-	setState(state: State) {
-		this.state = state;
-		this.deck.updateState(state);
-		this.dj.setMoodState(state);
-	}
-
-	startExecuting() {
-		this.setState(State.Executing);
-	}
-
-	newRound() {
-		if (this.state == State.GameOver) {
-			return this.endLevel();
-		}
-
-		this.setState(State.Planning);
-
-		this.player.drain();
-		this.ui.setPower(this.player.power);
-
-		this.dj.setMoodPlanning();
-		this.dj.setMoodPower(this.player.power, this.player.maxPower);
-
-		if (this.player.power <= 0) {
-			this.setState(State.GameOver);
-
-			this.addEvent(1000, () => {
-				this.intermission.fadeToIntermission(this.player, Mode.RestartLevel);
-			});
-		}
 	}
 
 	onLevelComplete() {

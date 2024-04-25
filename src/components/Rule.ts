@@ -6,7 +6,7 @@ import { Level } from "./levels";
 export class Rule extends Phaser.GameObjects.Container {
 	public scene: GameScene;
 
-	private ruleCard?: Card;
+	private ruleCard: Card;
 
 	constructor(scene: GameScene) {
 		super(scene);
@@ -37,9 +37,19 @@ export class Rule extends Phaser.GameObjects.Container {
 	}
 
 	getRule() {
-		if (this.ruleCard) {
-			return this.ruleCard.action;
-		}
-		return "";
+		return this.ruleCard.action;
+	}
+
+	flash() {
+		console.log("FLASH");
+		this.scene.tweens.addCounter({
+			delay: 500,
+			duration: 1000,
+			onUpdate: (tween, target, key, x: number) => {
+				// https://www.desmos.com/calculator/pxhniqzwcl
+				let y = Math.pow(1 - x, 2) * Math.cos(40 * x - 20 * x * x);
+				this.ruleCard.setAngle(15 * y);
+			},
+		});
 	}
 }
