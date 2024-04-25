@@ -1,5 +1,5 @@
 import { GameScene, State } from "@/scenes/GameScene";
-import { Button } from "./elements/Button";
+import { TextButton } from "./TextButton";
 import { Card } from "./Card";
 import { RoundRectangle } from "./elements/RoundRectangle";
 import { Color } from "@/utils/colors";
@@ -14,7 +14,7 @@ export class Deck extends Phaser.GameObjects.Container {
 
 	private cardSlots: { x: number }[];
 	private cards: Card[];
-	private button: Button;
+	private button: TextButton;
 
 	private activeCardIndex: number;
 	private activeMultiCard: boolean;
@@ -37,35 +37,11 @@ export class Deck extends Phaser.GameObjects.Container {
 
 		this.executeTimer = scene.addEvent(0, () => {});
 
-		this.button = new Button(this.scene, this.scene.CX, this.scene.H - 80);
+		let bx = this.scene.W - 230;
+		let by = this.scene.H - 110;
+		this.button = new TextButton(this.scene, bx, by, 260, 100, "Go!");
 		this.add(this.button);
-
-		let buttonBr = new RoundRectangle(this.scene, {
-			width: 200 + 16,
-			height: 80 + 16,
-			radius: 16 + 8,
-			color: Color.White,
-		});
-		this.button.add(buttonBr);
-
-		let buttonBg = new RoundRectangle(this.scene, {
-			width: 200,
-			height: 80,
-			radius: 16,
-			color: Color.Blue700,
-		});
-		this.button.add(buttonBg);
-
-		let buttonText = this.scene.addText({
-			size: 40,
-			color: "white",
-			text: "Go!",
-		});
-		buttonText.setOrigin(0.5);
-		this.button.add(buttonText);
-
 		this.button.setVisible(false);
-		this.button.bindInteractive(buttonBg);
 		this.button.on("click", this.execute, this);
 	}
 
@@ -189,7 +165,7 @@ export class Deck extends Phaser.GameObjects.Container {
 			let y = (1.5 + i) * this.scene.H;
 			let data = this.deck[i];
 			let card = new Card(this.scene, x, y, data.type, data.image, data.text);
-			card.setScale(0.95);
+			card.setScale(1.1);
 			this.add(card);
 			this.cards.push(card);
 		}

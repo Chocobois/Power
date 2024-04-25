@@ -11,7 +11,8 @@ export class TextButton extends Button {
 		x: number,
 		y: number,
 		width: number,
-		height: number
+		height: number,
+		text: string
 	) {
 		super(scene, x, y);
 		this.scene = scene;
@@ -35,9 +36,9 @@ export class TextButton extends Button {
 		this.add(background);
 
 		let buttonText = this.scene.addText({
-			size: 60,
+			size: height / 2,
 			color: "white",
-			text: "Start!",
+			text,
 		});
 		buttonText.setOrigin(0.5);
 		this.add(buttonText);

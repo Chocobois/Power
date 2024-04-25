@@ -84,7 +84,7 @@ export class Intermission extends Phaser.GameObjects.Container {
 
 		/* Button */
 
-		this.button = new TextButton(scene, scene.CX, scene.H - 120, 300, 120);
+		this.button = new TextButton(scene, scene.CX, scene.H - 120, 300, 120, "Go!");
 		this.add(this.button);
 		this.button.on("click", () => {
 			this.emit("restartLevel");
