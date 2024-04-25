@@ -21,6 +21,7 @@ const images: Image[] = [
 	image("robot/eyes_error", "robot_eyes_error"),
 	image("robot/eyes_low", "robot_eyes_low"),
 	image("robot/eyes_down", "robot_eyes_down"),
+	image("robot/eyes_happy", "robot_eyes_happy"),
 	image("robot/head", "robot_head"),
 
 	// Room
@@ -48,6 +49,9 @@ const images: Image[] = [
 	// UI
 	image("ui/battery", "battery"),
 	image("ui/battery_power", "battery_power"),
+	
+	// Backgrounds
+	image("backgrounds/tile", "tile"),
 ];
 
 /* Spritesheets */

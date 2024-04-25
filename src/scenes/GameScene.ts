@@ -4,19 +4,35 @@ import { UI } from "@/components/UI";
 import { DJ } from "@/components/DJ";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
+import { Intermission, Mode } from "@/components/Intermission";
 import { Color } from "@/utils/colors";
-import { Level, level1, level2 } from "@/components/levels";
+import { Level, level1, level2, levels } from "@/components/levels";
+
+export const enum State {
+	Intermission,
+	Planning,
+	Executing,
+	GameOver,
+}
 
 export class GameScene extends BaseScene {
+	public state: State;
+
 	private background: Phaser.GameObjects.Image;
 	private grid: Grid;
 	private player: Player;
 	private deck: Deck;
 	private ui: UI;
 	private dj: DJ;
+	private intermission: Intermission;
+
+	private levelIndex: number;
 
 	constructor() {
 		super({ key: "GameScene" });
+
+		this.state = State.Intermission;
+		this.levelIndex = 0;
 	}
 
 	create(): void {
@@ -28,16 +44,31 @@ export class GameScene extends BaseScene {
 		// this.fitToScreen(this.background);
 
 		this.grid = new Grid(this, this.CX, 400, 480);
+		this.grid.on("complete", this.onLevelComplete, this);
+
 		this.player = new Player(this);
 		this.ui = new UI(this);
 		this.dj = new DJ(this);
 
 		this.deck = new Deck(this);
 		this.deck.setDepth(2000);
+		this.deck.on("startExecuting", this.startExecuting, this);
 		this.deck.on("newRound", this.newRound, this);
 		this.deck.on("action", this.performAction, this);
 
-		this.startLevel(level2);
+		this.intermission = new Intermission(this);
+		this.intermission.setDepth(10000);
+		this.intermission.on("restartLevel", () => {
+			this.startLevel(levels[this.levelIndex]);
+		});
+		this.intermission.on("nextLevel", () => {
+			this.levelIndex++;
+			if (this.levelIndex < levels.length) {
+				this.startLevel(levels[this.levelIndex]);
+			}
+		});
+
+		this.setState(State.Intermission);
 	}
 
 	update(time: number, delta: number) {
@@ -46,11 +77,15 @@ export class GameScene extends BaseScene {
 		this.deck.update(time, delta);
 		this.dj.update(time, delta);
 		this.ui.update(time, delta);
+		this.intermission.update(time, delta);
 
 		this.ui.setBatteryBlink(this.dj.barTime, this.player.power);
 	}
 
 	startLevel(level: Level) {
+		this.setState(State.Planning);
+		this.intermission.fadeToGame(this.player);
+
 		this.grid.startLevel(level);
 
 		const cx = level.player.x;
@@ -60,10 +95,7 @@ export class GameScene extends BaseScene {
 
 		let pos = this.grid.getPosition(cx, cy);
 		this.player.setPosition(pos.x, pos.y);
-
-		let size = (this.grid.cellWidth + this.grid.cellHeight) / 2;
-		this.player.setCellSize(size);
-
+		this.player.setCellSize(1.1 * this.grid.cellHeight);
 		this.player.angle = level.player.angle;
 
 		this.deck.startLevel(level);
@@ -71,11 +103,15 @@ export class GameScene extends BaseScene {
 		this.player.setPower(level.power);
 		this.ui.setPower(this.player.power);
 
-		this.dj.setMoodStartLevel();
+		this.dj.setMoodStartLevel(this.levelIndex);
 	}
 
 	performAction(action: string) {
 		let { dx, dy } = this.player.getFacing();
+
+		if (this.state == State.GameOver) {
+			console.warn("Unintended");
+		}
 
 		switch (action) {
 			case "move_forward":
@@ -148,11 +184,54 @@ export class GameScene extends BaseScene {
 		this.dj.setMoodMovement();
 	}
 
+	setState(state: State) {
+		this.state = state;
+		this.deck.updateState(state);
+		this.dj.setMoodState(state);
+	}
+
+	startExecuting() {
+		this.setState(State.Executing);
+	}
+
 	newRound() {
+		if (this.state == State.GameOver) {
+			return this.endLevel();
+		}
+
+		this.setState(State.Planning);
+
 		this.player.drain();
 		this.ui.setPower(this.player.power);
 
 		this.dj.setMoodPlanning();
-		this.dj.setMoodPower(this.player.power);
+		this.dj.setMoodPower(this.player.power, this.player.maxPower);
+
+		if (this.player.power <= 0) {
+			this.setState(State.GameOver);
+
+			this.addEvent(1000, () => {
+				this.intermission.fadeToIntermission(this.player, Mode.RestartLevel);
+			});
+		}
+	}
+
+	onLevelComplete() {
+		this.setState(State.GameOver);
+		this.deck.haltExecution();
+
+		this.addEvent(500, () => {
+			this.player.dance();
+			this.addEvent(1000, this.endLevel, this);
+		});
+	}
+
+	endLevel() {
+		this.intermission.fadeToIntermission(
+			this.player,
+			this.levelIndex < levels.length - 1
+				? Mode.StartNextLevel
+				: Mode.TheEnd
+		);
 	}
 }

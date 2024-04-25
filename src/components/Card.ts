@@ -1,4 +1,4 @@
-import { GameScene } from "@/scenes/GameScene";
+import { GameScene, State } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
 import { Color, ColorStr } from "@/utils/colors";
 import { CardType } from "./cards";
@@ -108,6 +108,8 @@ export class Card extends Button {
 	onDrag() {
 		this.target.x = this.scene.input.activePointer.x - this.dragOffset.x;
 		this.target.y = this.scene.input.activePointer.y - this.dragOffset.y;
+
+		this.dragOffset.scale(0.99);
 	}
 
 	onDragEnd() {}
@@ -115,6 +117,10 @@ export class Card extends Button {
 	setHighlight(value: boolean) {
 		this.highlighted = value;
 		this.setAlpha(value ? 1.0 : 0.4);
+	}
+
+	updateState(state: State) {
+		this.edges.input!.enabled = state == State.Planning;
 	}
 
 	get color(): number {
@@ -133,13 +139,13 @@ export class Card extends Button {
 	get backgroundColor(): number {
 		switch (this.type) {
 			case CardType.Move:
-				return interpolateColor(Color.Blue100, Color.Slate50, 0.5);
+				return interpolateColor(Color.Blue100, Color.Gray100, 0.8);
 			case CardType.Turn:
-				return interpolateColor(Color.Teal100, Color.Slate50, 0.5);
+				return interpolateColor(Color.Emerald100, Color.Gray100, 0.8);
 			case CardType.Rule:
-				return interpolateColor(Color.Yellow100, Color.Slate50, 0.5);
+				return interpolateColor(Color.Yellow100, Color.Gray100, 0.8);
 			default:
-				return interpolateColor(Color.Slate100, Color.Slate50, 0.5);
+				return interpolateColor(Color.Slate100, Color.Gray100, 0.8);
 		}
 	}
 }

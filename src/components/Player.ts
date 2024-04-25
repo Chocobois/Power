@@ -10,6 +10,7 @@ enum Face {
 	Shock = "robot_eyes_shock",
 	Error = "robot_eyes_error",
 	Low = "robot_eyes_low",
+	Happy = "robot_eyes_happy",
 }
 
 export class Player extends Phaser.GameObjects.Container {
@@ -103,6 +104,8 @@ export class Player extends Phaser.GameObjects.Container {
 		this.wheels.setScale(this.size / this.wheels.width);
 		this.hull.setScale(this.size / this.hull.width);
 		this.eyes.setScale(this.size / this.eyes.width);
+
+		this.blink(Face.Forward);
 	}
 
 	setCell(cx: number, cy: number) {
@@ -113,6 +116,7 @@ export class Player extends Phaser.GameObjects.Container {
 	setPower(power: number) {
 		this.maxPower = power;
 		this.power = power;
+		this.eyes.setVisible(power > 0);
 	}
 
 	move(x: number, y: number, forward: boolean) {
@@ -138,22 +142,23 @@ export class Player extends Phaser.GameObjects.Container {
 		});
 	}
 
-	rotate(relAngle: number) {
+	rotate(relAngle: number, doLook = true) {
 		this.isActive = true;
+
+		if (doLook) {
+			this.blink(relAngle > 0 ? Face.Left : Face.Right, 5000);
+		}
 
 		this.scene.tweens.add({
 			targets: this,
 			angle: { from: this.angle, to: this.angle + relAngle },
 			duration: 1000,
 			ease: Phaser.Math.Easing.Sine.InOut,
-			onStart: () => {
-				this.blink(relAngle > 0 ? Face.Left : Face.Right, 5000);
-			},
 		});
 
 		this.scene.tweens.add({
 			targets: [this.head],
-			angle: { from: 0, to: relAngle / 4 },
+			angle: { from: 0, to: Math.min(relAngle / 4, 90) },
 			duration: 500,
 			yoyo: true,
 			ease: Phaser.Math.Easing.Sine.InOut,
@@ -243,6 +248,17 @@ export class Player extends Phaser.GameObjects.Container {
 				},
 			});
 		}
+	}
+
+	dance() {
+		this.blink(Face.Happy);
+
+		this.scene.addEvent(500, () => {
+			this.rotate(360, false);
+		});
+		this.scene.addEvent(1500, () => {
+			this.rotate(-270 - this.angle, false);
+		});
 	}
 
 	getFacing() {

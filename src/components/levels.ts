@@ -18,9 +18,8 @@ export const level1: Level = {
 		[0, 0, 1],
 	],
 	decoration: [
-		{ x: 0, y: 0, item: Decorations.Box },
-		{ x: 1, y: 0, item: Decorations.Plant },
-		{ x: 2, y: 0, item: Decorations.Sink },
+		{ x: 1, y: 1, item: Decorations.Plant },
+		{ x: 3, y: 3, item: Decorations.Box },
 	],
 	deck: [
 		Cards.MoveForward,
@@ -76,3 +75,5 @@ export const level2: Level = {
 	},
 	power: 9,
 };
+
+export const levels = [level1, level2];

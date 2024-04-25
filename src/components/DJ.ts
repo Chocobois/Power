@@ -1,4 +1,4 @@
-import { GameScene } from "@/scenes/GameScene";
+import { GameScene, State } from "@/scenes/GameScene";
 import { RuleCard } from "./RuleCard";
 import { Music } from "./Music";
 
@@ -39,11 +39,12 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.melody.play();
 
 		this.drums.setVolume(this.volume);
-		this.chip.setVolume(this.volume);
 
 		// Sync loops
 		this.drums.on("loop", this.sync, this);
-		this.scene.addEvent(500, this.sync, this);
+		// setInterval(() => {
+		// 	this.sync();
+		// }, 10000);
 	}
 
 	update(time: number, delta: number) {
@@ -56,8 +57,22 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.melody.update();
 	}
 
-	setMoodStartLevel() {
-		this.toggle(this.bass, true);
+	setMoodState(state: State) {
+		if (state == State.Intermission) {
+			this.toggle(this.drums, true);
+			this.toggle(this.bass, false);
+			this.toggle(this.battery, false);
+			this.toggle(this.chip, false);
+			this.toggle(this.chords, false);
+			this.toggle(this.riff, false);
+			this.toggle(this.melody, false);
+		}
+	}
+
+	setMoodStartLevel(level: number) {
+		this.toggle(this.chip, true);
+		this.toggle(this.bass, level > 0);
+		this.toggle(this.melody, level > 1);
 	}
 
 	setMoodPlanning() {
@@ -70,13 +85,11 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.toggle(this.chords, true);
 		this.toggle(this.chip, true);
 		this.toggle(this.riff, false);
-
-		// this.toggle(this.bass, true);
 	}
 
-	setMoodPower(power: number) {
+	setMoodPower(power: number, maxPower: number) {
 		if (power > 0) {
-			let factor = 1 - (power - 1) / 9;
+			let factor = 1 - (power - 1) / (maxPower - 1);
 			this.battery.setVolume(factor * this.volume);
 		} else {
 			this.battery.setVolume(0);
@@ -88,7 +101,7 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.scene.tweens.addCounter({
 			from: track.volume,
 			to: active ? this.volume : 0,
-			duration: 350,
+			duration: 500,
 			ease: Phaser.Math.Easing.Sine.InOut,
 			onUpdate: (tween, target, key, current: number) => {
 				track.setVolume(current);

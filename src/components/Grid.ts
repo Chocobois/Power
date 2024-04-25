@@ -13,6 +13,8 @@ export class Grid extends Phaser.GameObjects.Container {
 	public cellHeight: number;
 	public available: boolean[][];
 	private cells: Phaser.GameObjects.Rectangle[][];
+	private decorations: Phaser.GameObjects.Image[];
+	private remainingTiles: number;
 
 	// Sprites
 	private outside: Phaser.GameObjects.TileSprite;
@@ -74,23 +76,8 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.floor.setScale(this.cellWidth / 256);
 		this.add(this.floor);
 
-		this.cells = [];
-		for (let y = 0; y < this.columns; y++) {
-			this.cells[y] = [];
-			for (let x = 0; x < this.rows; x++) {
-				let pos = this.getPosition(x, y);
-				let rect = this.scene.add.rectangle(
-					pos.x - this.x,
-					pos.y - this.y,
-					this.cellWidth,
-					this.cellHeight,
-					Color.Amber800,
-					0.25
-				);
-				this.cells[y].push(rect);
-				this.add(rect);
-			}
-		}
+		this.decorations = [];
+		this.cells = [[]];
 
 		this.walls = scene.add.nineslice(
 			0,
@@ -143,6 +130,8 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.floor.height = this.columns * 192;
 		this.floor.setScale(this.cellWidth / 256);
 
+		this.remainingTiles = this.rows * this.columns;
+
 		this.cells.forEach((row) => row.forEach((cell) => cell.destroy()));
 		this.cells = [];
 		for (let y = 0; y < this.columns; y++) {
@@ -171,6 +160,7 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.walls.height = (this.columns + 3) * 192;
 		this.walls.setScale(this.cellWidth / 256);
 
+		this.decorations.forEach((decor) => decor.destroy());
 		level.decoration.forEach((decor) => {
 			this.addDecoration(decor.x - 1, decor.y - 1, decor.item);
 		});
@@ -186,12 +176,13 @@ export class Grid extends Phaser.GameObjects.Container {
 
 	block(cx: number, cy: number) {
 		this.available[cy][cx] = false;
-		this.clean(cx, cy);
 		this.cells[cy][cx].fillColor = Color.Red500;
 		this.cells[cy][cx].fillAlpha = 1;
+		this.clean(cx, cy);
 	}
 
 	addDecoration(cx: number, cy: number, decor: Decoration) {
+		// Remove debug visualization
 		for (let dx = 0; dx < decor.width; dx++)
 			for (let dy = 0; dy < decor.height; dy++)
 				if (this.isInside(cx + dx, cy - dy)) {
@@ -211,10 +202,19 @@ export class Grid extends Phaser.GameObjects.Container {
 		let ox = 1 / (2 * decor.width);
 		let oy = 1 - 1 / (2 * (decor.height + 1));
 		item.setOrigin(ox, oy);
+
+		this.decorations.push(item);
 	}
 
 	clean(cx: number, cy: number) {
-		this.cells[cy][cx].fillColor = 0xffffff;
+		if (this.cells[cy][cx].fillColor != Color.White) {
+			this.cells[cy][cx].fillColor = Color.White;
+
+			this.remainingTiles -= 1;
+			if (this.remainingTiles <= 0) {
+				this.emit("complete");
+			}
+		}
 	}
 
 	isInside(cx: number, cy: number) {

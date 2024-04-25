@@ -1,4 +1,4 @@
-import { GameScene } from "@/scenes/GameScene";
+import { GameScene, State } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
 import { Card } from "./Card";
 import { RoundRectangle } from "./elements/RoundRectangle";
@@ -19,6 +19,8 @@ export class Deck extends Phaser.GameObjects.Container {
 	private activeCardIndex: number;
 	private activeMultiCard: boolean;
 
+	private executeTimer: Phaser.Time.TimerEvent;
+
 	constructor(scene: GameScene) {
 		super(scene);
 		scene.add.existing(this);
@@ -32,6 +34,8 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.activeCardIndex = -1;
 		this.activeMultiCard = false;
 		this.cards = [];
+
+		this.executeTimer = scene.addEvent(0, () => {});
 
 		this.button = new Button(this.scene, this.scene.CX, this.scene.H - 80);
 		this.add(this.button);
@@ -94,6 +98,7 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.handSize = level.cards;
 		this.deck = level.deck;
 
+		this.cardSlots = [];
 		for (let i = 0; i < level.cards; i++) {
 			this.cardSlots.push({
 				x: this.scene.CX + (i - (level.cards - 1) / 2) * 210,
@@ -108,11 +113,14 @@ export class Deck extends Phaser.GameObjects.Container {
 	}
 
 	execute() {
+		this.emit("startExecuting");
 		this.activeCardIndex = 0;
 		this.activeMultiCard = false;
 		this.cards.sort((a, b) => a.x - b.x);
 		this.button.setVisible(false);
-		this.scene.addEvent(500, this.activateCard, this);
+
+		this.executeTimer.destroy();
+		this.executeTimer = this.scene.addEvent(500, this.activateCard, this);
 	}
 
 	activateCard() {
@@ -138,7 +146,8 @@ export class Deck extends Phaser.GameObjects.Container {
 		}
 
 		this.emit("action", card.action);
-		this.scene.addEvent(1050, () => {
+		this.executeTimer.destroy();
+		this.executeTimer = this.scene.addEvent(1050, () => {
 			this.activateCard();
 		});
 	}
@@ -148,6 +157,14 @@ export class Deck extends Phaser.GameObjects.Container {
 			this.activeMultiCard = false;
 			this.activeCardIndex++;
 		}
+	}
+
+	haltExecution() {
+		this.executeTimer.destroy();
+
+		this.scene.addEvent(500, () => {
+			this.cards.forEach((card) => card.setHighlight(false));
+		});
 	}
 
 	newRound() {
@@ -176,6 +193,10 @@ export class Deck extends Phaser.GameObjects.Container {
 			this.add(card);
 			this.cards.push(card);
 		}
+	}
+
+	updateState(state: State) {
+		this.cards.forEach((card) => card.updateState(state));
 	}
 
 	get hand(): CardData[] {

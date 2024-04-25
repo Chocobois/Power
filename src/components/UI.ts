@@ -38,7 +38,9 @@ export class UI extends Phaser.GameObjects.Container {
 		this.add(this.ruleCard);
 	}
 
-	update(time: number, delta: number) {}
+	update(time: number, delta: number) {
+		this.ruleCard.update(time, delta);
+	}
 
 	setPower(power: number) {
 		let slots: { [key: number]: number } = {

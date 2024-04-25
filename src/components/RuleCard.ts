@@ -43,23 +43,10 @@ export class RuleCard extends Button {
 
 		this.dragOffset = new Phaser.Math.Vector2();
 
-		this.bindInteractive(this.card, true);
+		this.bindInteractive(this.card, false);
 	}
 
 	update(time: number, delta: number) {
+		this.setScale(1.0 - 0.03 * this.holdSmooth);
 	}
-
-	onDragStart() {
-		this.dragOffset.set(
-			this.scene.input.activePointer.x - this.x,
-			this.scene.input.activePointer.y - this.y
-		);
-	}
-
-	onDrag() {
-		this.x = this.scene.input.activePointer.x - this.dragOffset.x;
-		// this.y = this.scene.input.activePointer.y - this.dragOffset.y;
-	}
-
-	onDragEnd() {}
 }
