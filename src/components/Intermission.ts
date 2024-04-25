@@ -84,7 +84,14 @@ export class Intermission extends Phaser.GameObjects.Container {
 
 		/* Button */
 
-		this.button = new TextButton(scene, scene.CX, scene.H - 120, 300, 120, "Go!");
+		this.button = new TextButton(
+			scene,
+			scene.CX,
+			scene.H - 120,
+			300,
+			120,
+			"Go!"
+		);
 		this.add(this.button);
 		this.button.on("click", () => {
 			this.emit("restartLevel");
@@ -120,7 +127,7 @@ export class Intermission extends Phaser.GameObjects.Container {
 	}
 
 	fadeToGame(focus: Player) {
-		this.button.setVisible(false);
+		this.hideContent();
 
 		// Open small circle around player
 		this.scene.tweens.addCounter({
@@ -177,6 +184,9 @@ export class Intermission extends Phaser.GameObjects.Container {
 				let radius = 200 * current;
 				this.redrawMask(focus.x, focus.y, radius);
 			},
+			onStart: () => {
+				this.showContent();
+			},
 			onComplete: () => {
 				if (mode == Mode.RestartLevel) {
 					this.emit("restartLevel");
@@ -191,5 +201,28 @@ export class Intermission extends Phaser.GameObjects.Container {
 	redrawMask(x: number, y: number, radius: number) {
 		this.graphics.clear();
 		this.graphics.fillCircle(x, y, radius);
+	}
+
+	showContent() {
+		this.scene.tweens.add({
+			targets: [this.button, this.title, this.description],
+			alpha: { from: 0, to: 1 },
+			duration: 500,
+			ease: Phaser.Math.Easing.Cubic.Out,
+			onComplete: () => {
+				this.button.setEnable(true);
+			},
+		});
+	}
+
+	hideContent() {
+		this.button.setEnable(false);
+
+		this.scene.tweens.add({
+			targets: [this.button, this.title, this.description],
+			alpha: { from: 1, to: 0 },
+			duration: 500,
+			ease: Phaser.Math.Easing.Cubic.Out,
+		});
 	}
 }

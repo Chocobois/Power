@@ -119,7 +119,7 @@ export class Button extends Phaser.GameObjects.Container {
 		return false;
 	}
 
-	block() {
-		this.blocked = true;
+	setEnable(value: boolean) {
+		this.blocked = !value;
 	}
 }
