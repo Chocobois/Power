@@ -165,9 +165,21 @@ export class Player extends Phaser.GameObjects.Container {
 		});
 	}
 
-	bump(x: number, y: number, forward: boolean) {
+	bump(x: number, y: number, rule: string) {
 		this.isActive = true;
-		let relAngle = -90;
+
+		let relAngle = 0;
+		switch (rule) {
+			case "rule_turn_left":
+				relAngle = -90;
+				break;
+			case "rule_turn_right":
+				relAngle = 90;
+				break;
+			case "rule_turn_around":
+				relAngle = 180;
+				break;
+		}
 
 		this.scene.tweens.add({
 			targets: this,
@@ -178,8 +190,6 @@ export class Player extends Phaser.GameObjects.Container {
 			ease: Phaser.Math.Easing.Sine.InOut,
 		});
 
-		// this.blink(forward ? Face.Down : Face.Up, 5000);
-		// this.blink(relAngle > 0 ? Face.Left : Face.Right, 5000);
 		this.blink(Face.Shock, 5000);
 		this.scene.addEvent(400, () => {
 			this.blink(Face.Error, 5000);
@@ -251,7 +261,7 @@ export class Player extends Phaser.GameObjects.Container {
 	}
 
 	dance() {
-		this.blink(Face.Happy);
+		this.blink(Face.Happy, 10000);
 
 		this.scene.addEvent(500, () => {
 			this.rotate(360, false);

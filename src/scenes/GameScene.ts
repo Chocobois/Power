@@ -4,6 +4,7 @@ import { UI } from "@/components/UI";
 import { DJ } from "@/components/DJ";
 import { Grid } from "@/components/Grid";
 import { Deck } from "@/components/Deck";
+import { Rule } from "@/components/Rule";
 import { Intermission, Mode } from "@/components/Intermission";
 import { Color } from "@/utils/colors";
 import { Level, level1, level2, levels } from "@/components/levels";
@@ -22,6 +23,7 @@ export class GameScene extends BaseScene {
 	private grid: Grid;
 	private player: Player;
 	private deck: Deck;
+	private rule: Rule;
 	private ui: UI;
 	private dj: DJ;
 	private intermission: Intermission;
@@ -49,6 +51,7 @@ export class GameScene extends BaseScene {
 		this.player = new Player(this);
 		this.ui = new UI(this);
 		this.dj = new DJ(this);
+		this.rule = new Rule(this);
 
 		this.deck = new Deck(this);
 		this.deck.setDepth(2000);
@@ -75,6 +78,7 @@ export class GameScene extends BaseScene {
 		this.grid.update(time, delta);
 		this.player.update(time, delta);
 		this.deck.update(time, delta);
+		this.rule.update(time, delta);
 		this.dj.update(time, delta);
 		this.ui.update(time, delta);
 		this.intermission.update(time, delta);
@@ -99,6 +103,8 @@ export class GameScene extends BaseScene {
 		this.player.angle = level.player.angle;
 
 		this.deck.startLevel(level);
+
+		this.rule.setRuleCard(level.rule);
 
 		this.player.setPower(level.power);
 		this.ui.setPower(this.player.power);
@@ -136,7 +142,7 @@ export class GameScene extends BaseScene {
 					this.player.bump(
 						this.player.x + 0.25 * dx * this.grid.cellWidth,
 						this.player.y + 0.25 * dy * this.grid.cellHeight,
-						true
+						this.rule.getRule()
 					);
 				}
 				break;
@@ -163,7 +169,7 @@ export class GameScene extends BaseScene {
 					this.player.bump(
 						this.player.x + 0.25 * dx * this.grid.cellWidth,
 						this.player.y + 0.25 * dy * this.grid.cellHeight,
-						false
+						this.rule.getRule()
 					);
 				}
 				break;
@@ -229,9 +235,7 @@ export class GameScene extends BaseScene {
 	endLevel() {
 		this.intermission.fadeToIntermission(
 			this.player,
-			this.levelIndex < levels.length - 1
-				? Mode.StartNextLevel
-				: Mode.TheEnd
+			this.levelIndex < levels.length - 1 ? Mode.StartNextLevel : Mode.TheEnd
 		);
 	}
 }

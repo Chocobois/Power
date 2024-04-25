@@ -1,9 +1,10 @@
-import { CardData, Cards } from "./cards";
+import { CardData, Cards, Rules } from "./cards";
 import { Decoration, Decorations } from "./decorations";
 
 export interface Level {
 	cards: number;
 	deck: CardData[];
+	rule: CardData;
 	decoration: { x: number; y: number; item: Decoration }[];
 	grid: number[][];
 	player: { x: number; y: number; angle: number };
@@ -32,6 +33,7 @@ export const level1: Level = {
 		Cards.MoveBackward,
 		Cards.TurnAround,
 	],
+	rule: Rules.TurnLeft,
 	player: {
 		x: 1,
 		y: 0,
@@ -56,6 +58,7 @@ export const level2: Level = {
 		{ x: 6, y: 3, item: Decorations.Box },
 		{ x: 6, y: 4, item: Decorations.Plant },
 	],
+	rule: Rules.TurnRight,
 	deck: [
 		Cards.MoveForward,
 		Cards.MoveForward,

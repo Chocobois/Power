@@ -47,14 +47,17 @@ export class Card extends Button {
 		this.edges.setTint(this.color);
 		this.add(this.edges);
 
-		this.icon = this.scene.add.sprite(0, -90, image);
-		this.icon.setScale(0.8);
+		this.icon = this.scene.add.sprite(0, -82, image);
+		this.icon.setScale(160 / this.icon.width);
 		this.icon.setTint(this.color);
 		this.add(this.icon);
 
+		if (this.action == "turn_right") this.icon.angle += 180;
+		if (this.action == "turn_left") this.icon.angle += 180;
+
 		/* Label */
 
-		let labelSize = 20;
+		let labelSize = 19;
 		this.label = this.scene.addText({
 			x: -60,
 			y: -165,
@@ -62,12 +65,13 @@ export class Card extends Button {
 			color: ColorStr.White,
 			text: type,
 		});
+		this.label.setLetterSpacing(5);
 		this.label.setOrigin(0.5);
 		this.add(this.label);
 
 		/* Description */
 
-		let descSize = 38;
+		let descSize = this.type == CardType.Rule ? 28 : 36;
 		let centerY = 512 / 6;
 		let gapY = 1.2 * descSize;
 		let topY = centerY - gapY * ((lines.length - 1) / 2);
@@ -80,22 +84,28 @@ export class Card extends Button {
 				color: ColorStr.Black,
 				text: lines[i],
 			});
-			line.setWordWrapWidth(192);
 			line.setOrigin(0.5);
 			this.add(line);
 			this.description.push(line);
 		}
 
 		this.dragOffset = new Phaser.Math.Vector2();
-		this.target = new Phaser.Math.Vector2();
+		this.target = new Phaser.Math.Vector2(this.x, this.y);
 
-		this.bindInteractive(this.edges, true);
+		this.bindInteractive(this.edges, this.type != CardType.Rule);
 	}
 
 	update(time: number, delta: number) {
 		let f = this.hold ? 0.5 : 0.2;
 		this.x += f * (this.target.x - this.x);
 		this.y += f * (this.target.y - this.y);
+
+		if (this.type == CardType.Rule) {
+			this.setScale(1.0 - 0.03 * this.holdSmooth);
+		}
+
+		if (this.action == "turn_right") this.icon.angle += delta / 100;
+		if (this.action == "turn_left") this.icon.angle -= delta / 100;
 	}
 
 	onDragStart() {
@@ -128,9 +138,9 @@ export class Card extends Button {
 			case CardType.Move:
 				return Color.Blue800;
 			case CardType.Turn:
-				return Color.Teal800;
+				return Color.Emerald800;
 			case CardType.Rule:
-				return Color.Yellow800;
+				return Color.Yellow600;
 			default:
 				return Color.Slate800;
 		}
@@ -143,7 +153,7 @@ export class Card extends Button {
 			case CardType.Turn:
 				return interpolateColor(Color.Emerald100, Color.Gray100, 0.8);
 			case CardType.Rule:
-				return interpolateColor(Color.Yellow100, Color.Gray100, 0.8);
+				return interpolateColor(Color.Yellow100, Color.Gray100, 0.7);
 			default:
 				return interpolateColor(Color.Slate100, Color.Gray100, 0.8);
 		}

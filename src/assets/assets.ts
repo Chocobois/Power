@@ -36,15 +36,16 @@ const images: Image[] = [
 	image("cards/card_edges", "card_edges"),
 	image("cards/card_surface", "card_surface"),
 	image("cards/card_inner", "card_inner"),
-	image("cards/rule", "rule"),
 	image("cards/move_forward", "move_forward"),
 	image("cards/turn_around", "turn_around"),
 	image("cards/turn_left", "turn_left"),
 	image("cards/move_forward_2", "move_forward_2"),
 	image("cards/turn_right", "turn_right"),
-	image("cards/rule_turn_left", "rule_turn_left"),
 	image("cards/move_forward_3", "move_forward_3"),
 	image("cards/move_backward", "move_backward"),
+	image("cards/rule_turn_left", "rule_turn_left"),
+	image("cards/rule_turn_right", "rule_turn_right"),
+	image("cards/rule_turn_around", "rule_turn_around"),
 
 	// UI
 	image("ui/battery", "battery"),
@@ -67,9 +68,7 @@ const audios: Audio[] = [
 	music("melody", "track_melody"),
 	music("riff", "track_riff"),
 
-	music("title", "m_main_menu"),
-	music("first", "m_first"),
-	sound("tree/rustle", "t_rustle", 0.5),
+	// sound("tree/rustle", "t_rustle", 0.5),
 ];
 
 /* Fonts */

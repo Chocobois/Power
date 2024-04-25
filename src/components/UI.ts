@@ -1,5 +1,4 @@
 import { GameScene } from "@/scenes/GameScene";
-import { RuleCard } from "./RuleCard";
 
 export class UI extends Phaser.GameObjects.Container {
 	public scene: GameScene;
@@ -7,8 +6,6 @@ export class UI extends Phaser.GameObjects.Container {
 	private panel: Phaser.GameObjects.Container;
 	private background: Phaser.GameObjects.Image;
 	private battery: Phaser.GameObjects.Image;
-
-	private ruleCard: RuleCard;
 
 	constructor(scene: GameScene) {
 		super(scene, 0, 0);
@@ -25,21 +22,6 @@ export class UI extends Phaser.GameObjects.Container {
 
 		this.battery = this.scene.add.image(1750, 330, "battery_power");
 		this.add(this.battery);
-
-		/* Rule */
-
-		this.ruleCard = new RuleCard(
-			this.scene,
-			180,
-			330,
-			"rule_turn_left",
-			"Turn 90° counter clockwise upon hitting an obstacle"
-		);
-		this.add(this.ruleCard);
-	}
-
-	update(time: number, delta: number) {
-		this.ruleCard.update(time, delta);
 	}
 
 	setPower(power: number) {

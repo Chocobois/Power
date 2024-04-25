@@ -1,5 +1,4 @@
 import { GameScene, State } from "@/scenes/GameScene";
-import { RuleCard } from "./RuleCard";
 import { Music } from "./Music";
 
 export class DJ extends Phaser.GameObjects.Container {
@@ -73,6 +72,7 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.toggle(this.chip, true);
 		this.toggle(this.bass, level > 0);
 		this.toggle(this.melody, level > 1);
+		this.setMoodPlanning();
 	}
 
 	setMoodPlanning() {

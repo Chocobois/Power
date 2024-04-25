@@ -47,3 +47,21 @@ export const Cards: { [key: string]: CardData } = {
 		text: ["Turn", "around", "180°"],
 	},
 };
+
+export const Rules: { [key: string]: CardData } = {
+	TurnLeft: {
+		type: CardType.Rule,
+		image: "rule_turn_left",
+		text: ["Turn 90°", "anti-clockwise", "upon hitting", "an obstacle"],
+	},
+	TurnRight: {
+		type: CardType.Rule,
+		image: "rule_turn_right",
+		text: ["Turn 90°", "clockwise", "upon hitting", "an obstacle"],
+	},
+	TurnAround: {
+		type: CardType.Rule,
+		image: "rule_turn_around",
+		text: ["Turn around", "180° upon", "hitting an obstacle"],
+	},
+};
