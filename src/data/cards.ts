@@ -62,6 +62,6 @@ export const Rules: { [key: string]: CardData } = {
 	TurnAround: {
 		type: CardType.Rule,
 		image: "rule_turn_around",
-		text: ["Turn around", "180° upon", "hitting an obstacle"],
+		text: ["Turn around", "upon hitting", "an obstacle"],
 	},
 };

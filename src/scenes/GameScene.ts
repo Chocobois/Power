@@ -98,8 +98,8 @@ export class GameScene extends BaseScene {
 
 		this.grid.startLevel(level);
 
-		const cx = level.player.x;
-		const cy = level.player.y;
+		const cx = level.player.x - 1;
+		const cy = level.player.y - 1;
 		this.player.setCell(cx, cy);
 		this.grid.clean(cx, cy);
 

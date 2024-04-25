@@ -36,8 +36,8 @@ export const level1: Level = {
 	rule: Rules.TurnLeft,
 	player: {
 		x: 1,
-		y: 0,
-		angle: 90,
+		y: 2,
+		angle: 0,
 	},
 	power: 5,
 };
@@ -45,13 +45,16 @@ export const level1: Level = {
 export const level2: Level = {
 	cards: 4,
 	grid: [
-		[1, 0, 0],
-		[0, 0, 0],
-		[0, 0, 1],
+		[1, 0, 0, 1, 1],
+		[0, 0, 0, 0, 0],
+		[0, 1, 0, 0, 0],
+		[0, 0, 0, 1, 1],
 	],
 	decoration: [
-		{ x: 1, y: 1, item: Decorations.Plant },
-		{ x: 3, y: 3, item: Decorations.Box },
+		{ x: 1, y: 1, item: Decorations.Box },
+		{ x: 2, y: 3, item: Decorations.Plant },
+		{ x: 4, y: 1, item: Decorations.Sink },
+		{ x: 4, y: 4, item: Decorations.Sink },
 	],
 	deck: [
 		Cards.MoveForward,
@@ -61,16 +64,17 @@ export const level2: Level = {
 		Cards.TurnRight,
 		Cards.TurnRight,
 		Cards.MoveForward2,
+		Cards.MoveForward3,
 		Cards.MoveBackward,
 		Cards.TurnAround,
 	],
-	rule: Rules.TurnLeft,
+	rule: Rules.TurnAround,
 	player: {
-		x: 1,
-		y: 0,
-		angle: 90,
+		x: 5,
+		y: 2,
+		angle: 180,
 	},
-	power: 5,
+	power: 9,
 };
 
 export const level3: Level = {
@@ -103,11 +107,11 @@ export const level3: Level = {
 		Cards.TurnAround,
 	],
 	player: {
-		x: 3,
-		y: 0,
+		x: 4,
+		y: 1,
 		angle: 90,
 	},
 	power: 9,
 };
 
-export const levels = [level3, level2, level3];
+export const levels = [level1, level2, level3];

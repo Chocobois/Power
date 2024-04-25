@@ -41,9 +41,8 @@ export class Rule extends Phaser.GameObjects.Container {
 	}
 
 	flash() {
-		console.log("FLASH");
 		this.scene.tweens.addCounter({
-			delay: 500,
+			delay: 400,
 			duration: 1000,
 			onUpdate: (tween, target, key, x: number) => {
 				// https://www.desmos.com/calculator/pxhniqzwcl
