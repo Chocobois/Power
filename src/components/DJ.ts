@@ -1,5 +1,5 @@
 import { GameScene, State } from "@/scenes/GameScene";
-import { Music } from "./Music";
+import { Music } from "../utils/Music";
 
 export class DJ extends Phaser.GameObjects.Container {
 	public scene: GameScene;

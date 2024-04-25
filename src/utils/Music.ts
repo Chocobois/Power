@@ -1,4 +1,4 @@
-import MusicData, { MusicKey } from "@/components/MusicData";
+import MusicData, { MusicKey } from "@/data/songs";
 
 export class Music extends Phaser.Sound.WebAudioSound {
 	public _prevBarTime: number;

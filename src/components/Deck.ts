@@ -3,8 +3,8 @@ import { TextButton } from "./TextButton";
 import { Card } from "./Card";
 import { RoundRectangle } from "./elements/RoundRectangle";
 import { Color } from "@/utils/colors";
-import { Level } from "./levels";
-import { CardData, CardType } from "./cards";
+import { Level } from "../data/levels";
+import { CardData, CardType } from "../data/cards";
 
 export class Deck extends Phaser.GameObjects.Container {
 	public scene: GameScene;

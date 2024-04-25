@@ -1,7 +1,7 @@
 import { GameScene } from "@/scenes/GameScene";
 import { Card } from "./Card";
-import { CardData, Rules } from "./cards";
-import { Level } from "./levels";
+import { CardData, Rules } from "../data/cards";
+import { Level } from "../data/levels";
 
 export class Rule extends Phaser.GameObjects.Container {
 	public scene: GameScene;

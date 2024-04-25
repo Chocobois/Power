@@ -1,7 +1,7 @@
 import { GameScene, State } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
 import { Color, ColorStr } from "@/utils/colors";
-import { CardType } from "./cards";
+import { CardType } from "../data/cards";
 import { interpolateColor } from "@/utils/functions";
 
 export class Card extends Button {

@@ -43,6 +43,37 @@ export const level1: Level = {
 };
 
 export const level2: Level = {
+	cards: 4,
+	grid: [
+		[1, 0, 0],
+		[0, 0, 0],
+		[0, 0, 1],
+	],
+	decoration: [
+		{ x: 1, y: 1, item: Decorations.Plant },
+		{ x: 3, y: 3, item: Decorations.Box },
+	],
+	deck: [
+		Cards.MoveForward,
+		Cards.MoveForward,
+		Cards.TurnLeft,
+		Cards.TurnLeft,
+		Cards.TurnRight,
+		Cards.TurnRight,
+		Cards.MoveForward2,
+		Cards.MoveBackward,
+		Cards.TurnAround,
+	],
+	rule: Rules.TurnLeft,
+	player: {
+		x: 1,
+		y: 0,
+		angle: 90,
+	},
+	power: 5,
+};
+
+export const level3: Level = {
 	cards: 5,
 	grid: [
 		[0, 1, 1, 0, 0, 0],
@@ -79,4 +110,4 @@ export const level2: Level = {
 	power: 9,
 };
 
-export const levels = [level1, level2];
+export const levels = [level3, level2, level3];

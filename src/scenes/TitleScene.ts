@@ -1,5 +1,5 @@
 import { BaseScene } from "@/scenes/BaseScene";
-import { Music } from "@/components/Music";
+import { Music } from "@/utils/Music";
 
 import { title, version } from "@/version.json";
 
@@ -139,7 +139,7 @@ export class TitleScene extends BaseScene {
 
 		// Music
 		if (!this.musicTitle) {
-			this.musicTitle = new Music(this, "m_first", { volume: 0.4 });
+			this.musicTitle = new Music(this, "track_bass", { volume: 0.4 });
 			this.musicTitle.on("bar", this.onBar, this);
 			this.musicTitle.on("beat", this.onBeat, this);
 

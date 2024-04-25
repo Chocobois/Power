@@ -7,7 +7,7 @@ import { Deck } from "@/components/Deck";
 import { Rule } from "@/components/Rule";
 import { Intermission, Mode } from "@/components/Intermission";
 import { Color } from "@/utils/colors";
-import { Level, level1, level2, levels } from "@/components/levels";
+import { Level, level1, level2, levels } from "@/data/levels";
 
 export const enum State {
 	Intermission,

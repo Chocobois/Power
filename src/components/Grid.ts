@@ -1,8 +1,8 @@
 import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./elements/Button";
 import { Color } from "@/utils/colors";
-import { Level } from "./levels";
-import { Decoration } from "./decorations";
+import { Level } from "../data/levels";
+import { Decoration } from "../data/decorations";
 
 export class Grid extends Phaser.GameObjects.Container {
 	public scene: GameScene;
