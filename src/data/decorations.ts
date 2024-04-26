@@ -17,8 +17,13 @@ export const Decorations = {
 		width: 1,
 		height: 1,
 	},
-	Sink: {
-		key: "deco_sink",
+	Desk: {
+		key: "deco_desk",
+		width: 2,
+		height: 1,
+	},
+	Bookshelf: {
+		key: "deco_bookshelf",
 		width: 2,
 		height: 1,
 	},

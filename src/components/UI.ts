@@ -57,9 +57,9 @@ export class UI extends Phaser.GameObjects.Container {
 		for (let i = 0; i < power; i++) {
 			let bar = this.bars[i];
 			let color =
-				i / power < 0.3
+				(i + 1) / power < 0.3
 					? Color.Red600
-					: i / power <= 0.6
+					: (i + 1) / power <= 0.6
 					? Color.Amber500
 					: Color.Green600;
 
