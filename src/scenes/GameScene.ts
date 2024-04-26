@@ -69,15 +69,15 @@ export class GameScene extends BaseScene {
 			}
 		});
 
-		/* UIScene */
-
-		this.scene.get("UIScene").events.on("volume", (value: number) => {
-			this.dj.setVolume(value);
-		});
-
 		/* Init */
 
+		this.input.keyboard?.on("keydown-P", () => {
+			this.onLevelComplete();
+		});
+
 		this.setState(State.Intermission);
+
+		this.startLevel(levels[this.levelIndex]);
 	}
 
 	update(time: number, delta: number) {

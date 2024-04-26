@@ -21,7 +21,8 @@ export class DJ extends Phaser.GameObjects.Container {
 		scene.add.existing(this);
 		this.scene = scene;
 
-		this.volume = 0.5;
+		this.volume = 1.0;
+		this.scene.sound.volume = 0.5;
 
 		this.drums = new Music(scene, "track_drums", { volume: 0 });
 		this.bass = new Music(scene, "track_bass", { volume: 0 });
