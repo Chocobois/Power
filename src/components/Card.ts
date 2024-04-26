@@ -6,9 +6,10 @@ import { interpolateColor } from "@/utils/functions";
 
 export class Card extends Button {
 	public scene: GameScene;
-	public type: CardType;
-	public action: string;
-	public highlighted: boolean;
+	public type: CardType; // Card type that determines color
+	public action: string; // The action written on the card
+	public highlighted: boolean; // If card is being executed and raised
+	public busy: boolean; // If tween is currently moving the card
 
 	private edges: Phaser.GameObjects.Sprite;
 	private surface: Phaser.GameObjects.Sprite;
@@ -34,6 +35,7 @@ export class Card extends Button {
 		this.type = type;
 		this.action = image;
 		this.highlighted = false;
+		this.busy = false;
 
 		this.surface = this.scene.add.sprite(0, 0, "card_surface");
 		this.surface.setTint(this.backgroundColor);
@@ -98,7 +100,7 @@ export class Card extends Button {
 	}
 
 	update(time: number, delta: number) {
-		if (this.enabled) {
+		if (!this.busy) {
 			let f = this.hold ? 0.5 : 0.2;
 			this.x += f * (this.target.x - this.x);
 			this.y += f * (this.target.y - this.y);
@@ -126,11 +128,18 @@ export class Card extends Button {
 
 	setHighlight(value: boolean) {
 		this.highlighted = value;
-		this.setAlpha(value ? 1.0 : 0.4);
+
+		this.scene.tweens.add({
+			targets: this,
+			alpha: { from: this.alpha, to: value ? 1.0 : 0.4 },
+			duration: 250,
+			ease: "Cubic.easeInOut",
+		});
 	}
 
 	addToGame(index: number) {
 		this.enabled = false;
+		this.busy = true;
 
 		this.scene.tweens.add({
 			targets: this,
@@ -140,6 +149,7 @@ export class Card extends Button {
 			ease: "Cubic.easeInOut",
 			onComplete: () => {
 				this.enabled = true;
+				this.busy = false;
 			},
 		});
 	}
@@ -148,6 +158,8 @@ export class Card extends Button {
 		if (immediate) return this.destroy();
 
 		this.enabled = false;
+		this.busy = true;
+		this.setHighlight(false);
 
 		this.scene.tweens.add({
 			targets: this,

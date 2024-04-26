@@ -187,7 +187,7 @@ export class Deck extends Phaser.GameObjects.Container {
 			card.addToGame(i);
 		}
 
-		this.scene.addEvent(2000, () => {
+		this.scene.addEvent(2200, () => {
 			this.button.enabled = true;
 		});
 	}
