@@ -118,7 +118,7 @@ export class Intermission extends Phaser.GameObjects.Container {
 
 		if (mode == Mode.Instructions) {
 			this.description.setText(
-				"Welcome!\n\nHelp the robot clean all squares.\n\nDrag and drop the movement cards to plan your route."
+				"Welcome!\n\nHelp the robot collect all the charges.\n\nDrag and drop the movement cards to plan your route."
 			);
 		}
 		if (mode == Mode.TheEnd) {
