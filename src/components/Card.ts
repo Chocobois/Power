@@ -93,7 +93,7 @@ export class Card extends Button {
 		this.target = new Phaser.Math.Vector2(this.x, this.y);
 
 		if (this.type != CardType.Rule) {
-			this.bindInteractive(this.edges);
+			this.bindInteractive(this.edges, true);
 		}
 	}
 
@@ -160,9 +160,7 @@ export class Card extends Button {
 	}
 
 	updateState(state: State) {
-		if (this.edges.input) {
-			this.edges.input.enabled = state == State.Planning;
-		}
+		this.enabled = state == State.Planning;
 	}
 
 	get color(): number {
