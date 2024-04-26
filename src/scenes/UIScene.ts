@@ -119,7 +119,8 @@ export class UIScene extends BaseScene {
 	}
 
 	onAudioChange(value: number) {
-		this.sound.volume = value;
+		// this.sound.volume = value;
+		this.events.emit("volume", value);
 		this.audioImage.setFrame(value > 0 ? 0 : 1);
 		this.optionsTimer = 3000;
 	}

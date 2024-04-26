@@ -69,15 +69,22 @@ export class GameScene extends BaseScene {
 			}
 		});
 
+
+		/* UIScene */
+
+		this.scene.get("UIScene").events.on("volume", (value: number) => {
+			this.dj.setVolume(value);
+		});
+
 		/* Init */
 
-		this.input.keyboard?.on("keydown-P", () => {
-			this.onLevelComplete();
-		});
+		// this.input.keyboard?.on("keydown-P", () => {
+		// 	this.onLevelComplete();
+		// });
 
 		this.setState(State.Intermission);
 
-		this.startLevel(levels[this.levelIndex]);
+		// this.startLevel(levels[this.levelIndex]);
 	}
 
 	update(time: number, delta: number) {
@@ -177,7 +184,7 @@ export class GameScene extends BaseScene {
 						true
 					);
 
-					this.addEvent(750, () => {
+					this.addEvent(700, () => {
 						this.grid.clean(nextX, nextY);
 					});
 				} else {
@@ -205,7 +212,7 @@ export class GameScene extends BaseScene {
 						false
 					);
 
-					this.addEvent(500, () => {
+					this.addEvent(700, () => {
 						this.grid.clean(prevX, prevY);
 					});
 				} else {
