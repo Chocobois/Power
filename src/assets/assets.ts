@@ -47,7 +47,6 @@ const images: Image[] = [
 
 	// UI
 	image("ui/battery", "battery"),
-	image("ui/battery_power", "battery_power"),
 	image("ui/gear", "gear"),
 
 	// Backgrounds

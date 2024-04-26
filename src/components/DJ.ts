@@ -93,6 +93,7 @@ export class DJ extends Phaser.GameObjects.Container {
 			this.battery.setVolume(0);
 		}
 		this.toggle(this.drums, power > 0);
+		this.toggle(this.riff, power > 0);
 	}
 
 	toggle(track: Music, active: boolean) {

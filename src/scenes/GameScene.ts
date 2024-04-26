@@ -121,7 +121,7 @@ export class GameScene extends BaseScene {
 		this.rule.setRuleCard(level.rule);
 
 		this.player.setPower(level.power);
-		this.ui.setPower(this.player.power);
+		this.ui.setMaxPower(this.player.power);
 
 		this.dj.setMoodStartLevel(this.levelIndex);
 		this.dj.setMoodPlanning();
@@ -177,7 +177,7 @@ export class GameScene extends BaseScene {
 						true
 					);
 
-					this.addEvent(500, () => {
+					this.addEvent(750, () => {
 						this.grid.clean(nextX, nextY);
 					});
 				} else {
