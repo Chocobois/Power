@@ -5,7 +5,7 @@
 	"itch": {
 		"upload": true,
 		"username": "golen",
-		"game": "robot-test"
+		"game": "mech-motion"
 	},
 	"neutralino": {
 		"allow": ["app.exit", "window.center"]
