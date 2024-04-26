@@ -144,12 +144,14 @@ export class Card extends Button {
 		});
 	}
 
-	removeFromGame(index: number) {
+	removeFromGame(index: number, immediate: boolean) {
+		if (immediate) return this.destroy();
+
 		this.enabled = false;
 
 		this.scene.tweens.add({
 			targets: this,
-			x: "+=1500",
+			x: "+=1920",
 			duration: 700,
 			delay: index * 100,
 			ease: "Cubic.easeInOut",

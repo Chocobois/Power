@@ -20,7 +20,7 @@
 			"height": 845,
 			"minWidth": 960,
 			"minHeight": 570,
-			"fullScreen": false,
+			"fullScreen": true,
 			"alwaysOnTop": false,
 			"icon": "src/public/icon.png",
 			"enableInspector": false,

@@ -81,6 +81,8 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.minMoveCount = level.minMove;
 		this.minTurnCount = level.minTurn;
 
+		this.clearHand(true);
+
 		this.cardSlots = [];
 		for (let i = 0; i < level.cards; i++) {
 			this.cardSlots.push({
@@ -150,9 +152,9 @@ export class Deck extends Phaser.GameObjects.Container {
 		});
 	}
 
-	clearHand() {
+	clearHand(immediate = false) {
 		this.cards.forEach((card, index) => {
-			card.removeFromGame(this.handSize - index);
+			card.removeFromGame(this.handSize - index, immediate);
 		});
 		this.cards = [];
 	}
