@@ -69,6 +69,14 @@ export class GameScene extends BaseScene {
 			}
 		});
 
+		/* UIScene */
+
+		this.scene.get("UIScene").events.on("volume", (value: number) => {
+			this.dj.setVolume(value);
+		});
+
+		/* Init */
+
 		this.setState(State.Intermission);
 	}
 

@@ -14,12 +14,14 @@ export class DJ extends Phaser.GameObjects.Container {
 	private riff: Music;
 	private melody: Music;
 
+	private allTracks: Music[];
+
 	constructor(scene: GameScene) {
 		super(scene, 0, 0);
 		scene.add.existing(this);
 		this.scene = scene;
 
-		this.volume = 0.5;
+		this.volume = 0.0;
 
 		this.drums = new Music(scene, "track_drums", { volume: 0 });
 		this.bass = new Music(scene, "track_bass", { volume: 0 });
@@ -29,31 +31,27 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.riff = new Music(scene, "track_riff", { volume: 0 });
 		this.melody = new Music(scene, "track_melody", { volume: 0 });
 
-		this.drums.play();
-		this.bass.play();
-		this.battery.play();
-		this.chip.play();
-		this.chords.play();
-		this.riff.play();
-		this.melody.play();
+		this.allTracks = [
+			this.drums,
+			this.bass,
+			this.battery,
+			this.chip,
+			this.chords,
+			this.riff,
+			this.melody,
+		];
+		this.allTracks.forEach((track) => track.play());
 
 		this.drums.setVolume(this.volume);
+		this.drums.active = true;
 
 		// Sync loops
 		this.drums.on("loop", this.sync, this);
-		// setInterval(() => {
-		// 	this.sync();
-		// }, 10000);
+		// this.scene.addEvent(1000, this.sync, this);
 	}
 
 	update(time: number, delta: number) {
-		this.drums.update();
-		this.bass.update();
-		this.battery.update();
-		this.chip.update();
-		this.chords.update();
-		this.riff.update();
-		this.melody.update();
+		this.allTracks.forEach((track) => track.update());
 	}
 
 	setMoodState(state: State) {
@@ -98,6 +96,8 @@ export class DJ extends Phaser.GameObjects.Container {
 	}
 
 	toggle(track: Music, active: boolean) {
+		track.active = active;
+
 		this.scene.tweens.addCounter({
 			from: track.volume,
 			to: active ? this.volume : 0,
@@ -117,6 +117,16 @@ export class DJ extends Phaser.GameObjects.Container {
 		this.chords.setSeek(seek);
 		this.riff.setSeek(seek);
 		this.melody.setSeek(seek);
+	}
+
+	setVolume(value: number) {
+		this.volume = value;
+
+		this.allTracks.forEach((track) => {
+			if (track.active) {
+				track.setVolume(this.volume);
+			}
+		});
 	}
 
 	get barTime(): number {

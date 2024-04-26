@@ -1,6 +1,7 @@
 import MusicData, { MusicKey } from "@/data/songs";
 
 export class Music extends Phaser.Sound.WebAudioSound {
+	public active: boolean;
 	public _prevBarTime: number;
 	public bpm: number;
 	public end: number;
@@ -16,6 +17,7 @@ export class Music extends Phaser.Sound.WebAudioSound {
 		super(scene.sound, myKey, config);
 		scene.sound.sounds.push(this);
 		this.myKey = myKey;
+		this.active = false;
 
 		if (!MusicData[myKey]) {
 			throw "Music data missing for: " + myKey;

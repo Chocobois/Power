@@ -2,6 +2,7 @@ import { BaseScene } from "@/scenes/BaseScene";
 
 export class Button extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
+	public enabled: boolean;
 	// private hover: boolean;
 	private _hold: boolean;
 	protected blocked: boolean;
@@ -19,6 +20,7 @@ export class Button extends Phaser.GameObjects.Container {
 		// this.hover = false;
 		this._hold = false;
 		this.blocked = false;
+		this.enabled = true;
 
 		this.liftSmooth = 0;
 		this.holdSmooth = 0;
@@ -103,7 +105,7 @@ export class Button extends Phaser.GameObjects.Container {
 		localY: number,
 		event: Phaser.Types.Input.EventData
 	) {
-		if (this.hold && !this.blocked) {
+		if (this.hold && !this.blocked && this.enabled) {
 			this.hold = false;
 			this.emit("click");
 		}
@@ -117,9 +119,5 @@ export class Button extends Phaser.GameObjects.Container {
 
 	isInsidePlayingField(): boolean {
 		return false;
-	}
-
-	setEnable(value: boolean) {
-		this.blocked = !value;
 	}
 }
