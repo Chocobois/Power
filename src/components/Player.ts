@@ -20,6 +20,7 @@ export class Player extends Phaser.GameObjects.Container {
 	public cell: Phaser.Math.Vector2;
 
 	private size: number;
+	private torso: Phaser.GameObjects.Container;
 	private wheels: Phaser.GameObjects.Sprite;
 	private head: Phaser.GameObjects.Container;
 	private hull: Phaser.GameObjects.Sprite;
@@ -45,17 +46,20 @@ export class Player extends Phaser.GameObjects.Container {
 		this.size = 256;
 		this.isActive = false;
 
-		this.wheels = this.scene.add.sprite(0, 0, "robot_wheels_1");
+		this.torso = this.scene.add.container();
+		this.add(this.torso);
+
+		this.wheels = this.scene.add.sprite(0, 0, "robot_wheels", 0);
 		this.wheels.setScale(this.size / this.wheels.width);
 		// this.wheels.setAlpha(0.5);
 		this.wheels.setTint(0xbbbbbb);
 		this.wheels.setAngle(-90);
-		this.add(this.wheels);
+		this.torso.add(this.wheels);
 
 		this.head = this.scene.add.container();
 		this.add(this.head);
 
-		this.hull = this.scene.add.sprite(0, 0, "robot_head");
+		this.hull = this.scene.add.sprite(0, 0, "robot_head", 0);
 		this.hull.setScale(this.size / this.hull.width);
 		this.hull.setAngle(-90);
 		this.head.add(this.hull);
@@ -75,27 +79,36 @@ export class Player extends Phaser.GameObjects.Container {
 	}
 
 	update(time: number, delta: number) {
-		if (!this.alive) return;
-
 		this.setDepth(this.y);
 
-		let squish = Math.sin((4 * time) / 1000);
-		// let f = this.size / this.head.width;
-		// this.wheels.setScale(f - 0.01 * squish, f + 0.01 * squish);
-		this.head.setScale(1 + 0.02 * squish, 1 - 0.02 * squish);
+		let angle = -Math.PI / 2 - this.angle * Phaser.Math.DEG_TO_RAD;
+		this.head.x = 4 * Math.cos(angle);
+		this.head.y = 4 * Math.sin(angle);
+		this.torso.x = -2 * Math.cos(angle);
+		this.torso.y = -2 * Math.sin(angle);
 
-		if (this.isActive) {
-			let dx = Math.abs(this.x - this.prevX);
-			let dy = Math.abs(this.y - this.prevY);
-			let da = Math.abs(this.angle - this.prevAngle);
-			this.wheelValue += (dx + dy + da) / 15;
-			this.wheels.setTexture(
-				this.wheelValue % 2 < 1 ? "robot_wheels_1" : "robot_wheels_2"
-			);
+		if (this.alive) {
+			let squish = Math.sin((4 * time) / 1000);
+			this.head.setScale(1 + 0.02 * squish, 1 - 0.02 * squish);
+			this.torso.setScale(1 - 0.01 * squish, 1 + 0.01 * squish);
 
-			this.prevX = this.x;
-			this.prevY = this.y;
-			this.prevAngle = this.angle;
+			// Calculate wheel movement
+			if (this.isActive) {
+				let dx = Math.abs(this.x - this.prevX);
+				let dy = Math.abs(this.y - this.prevY);
+				let da = Math.abs(this.angle - this.prevAngle);
+				this.wheelValue += (dx + dy + da) / 15;
+
+				this.prevX = this.x;
+				this.prevY = this.y;
+				this.prevAngle = this.angle;
+			}
+
+			// Animate body
+			let wheelbase = this.wheelValue % 2 < 1 ? 0 : 3;
+			let anim = Math.floor((5 * time) / 1000) % 3;
+			this.wheels.setFrame(wheelbase + anim);
+			this.hull.setFrame(anim);
 		}
 	}
 
@@ -222,7 +235,7 @@ export class Player extends Phaser.GameObjects.Container {
 		}
 
 		if (!duration) {
-			duration = Phaser.Math.RND.between(2000, 6000);
+			duration = Phaser.Math.RND.between(3000, 6000);
 		}
 
 		this.eyes.setTexture(Face.Closed);
@@ -264,9 +277,11 @@ export class Player extends Phaser.GameObjects.Container {
 		this.blink(Face.Happy, 10000);
 
 		this.scene.addEvent(500, () => {
+			this.blink(Face.Left, 10000);
 			this.rotate(360, false);
 		});
 		this.scene.addEvent(1500, () => {
+			this.blink(Face.Happy, 10000);
 			this.rotate(-270 - this.angle, false);
 		});
 	}

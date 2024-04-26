@@ -1,4 +1,4 @@
-import { Image, SpriteSheet, Audio } from "./assetUtils";
+import { Image, SpriteSheet, Audio, spritesheet } from "./assetUtils";
 import { image, sound, music, loadFont } from "./assetUtils";
 
 /* Images */
@@ -11,26 +11,24 @@ const images: Image[] = [
 
 	// Robot
 	image("robot/eyes_shock", "robot_eyes_shock"),
-	image("robot/wheels_1", "robot_wheels_1"),
 	image("robot/eyes_up", "robot_eyes_up"),
 	image("robot/eyes_right", "robot_eyes_right"),
 	image("robot/eyes_closed", "robot_eyes_closed"),
-	image("robot/wheels_2", "robot_wheels_2"),
 	image("robot/eyes_forward", "robot_eyes_forward"),
 	image("robot/eyes_left", "robot_eyes_left"),
 	image("robot/eyes_error", "robot_eyes_error"),
 	image("robot/eyes_low", "robot_eyes_low"),
 	image("robot/eyes_down", "robot_eyes_down"),
 	image("robot/eyes_happy", "robot_eyes_happy"),
-	image("robot/head", "robot_head"),
 
 	// Room
 	image("room/outside", "outside"),
 	image("room/floor", "floor"),
+	image("room/walls", "walls"),
 	image("room/decoration/sink", "deco_sink"),
 	image("room/decoration/plant", "deco_plant"),
 	image("room/decoration/box", "deco_box"),
-	image("room/walls", "walls"),
+	image("room/collectibles/shadow", "shadow"),
 
 	// Cards
 	image("cards/card_edges", "card_edges"),
@@ -50,13 +48,20 @@ const images: Image[] = [
 	// UI
 	image("ui/battery", "battery"),
 	image("ui/battery_power", "battery_power"),
-	
+	image("ui/gear", "gear"),
+
 	// Backgrounds
 	image("backgrounds/tile", "tile"),
 ];
 
 /* Spritesheets */
-const spritesheets: SpriteSheet[] = [];
+const spritesheets: SpriteSheet[] = [
+	spritesheet("ui/music", "music", 256, 256),
+	spritesheet("ui/audio", "audio", 256, 256),
+	spritesheet("room/collectibles/bolt", "bolt", 128, 128),
+	spritesheet("robot/head", "robot_head", 128, 128),
+	spritesheet("robot/wheels", "robot_wheels", 128, 128),
+];
 
 /* Audios */
 const audios: Audio[] = [
