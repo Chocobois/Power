@@ -1,8 +1,6 @@
 import { GameScene, State } from "@/scenes/GameScene";
 import { TextButton } from "./TextButton";
 import { Card } from "./Card";
-import { RoundRectangle } from "./elements/RoundRectangle";
-import { Color } from "@/utils/colors";
 import { Level } from "../data/levels";
 import { CardData, CardType } from "../data/cards";
 
@@ -11,6 +9,8 @@ export class Deck extends Phaser.GameObjects.Container {
 
 	private handSize: number;
 	private deck: CardData[];
+	private minMoveCount: number;
+	private minTurnCount: number;
 
 	private cardSlots: { x: number }[];
 	private cards: Card[];
@@ -28,6 +28,8 @@ export class Deck extends Phaser.GameObjects.Container {
 
 		this.handSize = 0;
 		this.deck = [];
+		this.minMoveCount = 1;
+		this.minTurnCount = 1;
 
 		this.cardSlots = [];
 
@@ -41,11 +43,14 @@ export class Deck extends Phaser.GameObjects.Container {
 		let by = this.scene.H - 110;
 		this.button = new TextButton(this.scene, bx, by, 260, 100, "Go!");
 		this.add(this.button);
-		this.button.setVisible(false);
+		this.button.setAlpha(0);
+		this.button.enabled = false;
 		this.button.on("click", this.execute, this);
 	}
 
 	update(time: number, delta: number) {
+		let buttonAlpha = this.button.enabled ? 1 : 0;
+		this.button.alpha += 0.1 * (buttonAlpha - this.button.alpha);
 		this.button.setScale(1.0 - 0.1 * this.button.holdSmooth);
 
 		this.cards.sort((a, b) => a.x - b.x);
@@ -73,6 +78,8 @@ export class Deck extends Phaser.GameObjects.Container {
 	startLevel(level: Level) {
 		this.handSize = level.cards;
 		this.deck = level.deck;
+		this.minMoveCount = level.minMove;
+		this.minTurnCount = level.minTurn;
 
 		this.cardSlots = [];
 		for (let i = 0; i < level.cards; i++) {
@@ -93,7 +100,7 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.activeCardIndex = 0;
 		this.activeMultiCard = false;
 		this.cards.sort((a, b) => a.x - b.x);
-		this.button.setVisible(false);
+		this.button.enabled = false;
 
 		this.executeTimer.destroy();
 		this.executeTimer = this.scene.addEvent(500, this.activateCard, this);
@@ -101,8 +108,8 @@ export class Deck extends Phaser.GameObjects.Container {
 
 	activateCard() {
 		if (this.activeCardIndex >= this.cards.length) {
-			this.emit("newRound");
-			return this.newRound();
+			this.clearHand();
+			return this.emit("requestNewRound");
 		}
 
 		this.cards.forEach((card) => card.setHighlight(false));
@@ -143,16 +150,22 @@ export class Deck extends Phaser.GameObjects.Container {
 		});
 	}
 
-	newRound() {
-		this.cards.forEach((card) => card.destroy());
+	clearHand() {
+		this.cards.forEach((card, index) => {
+			card.removeFromGame(this.handSize - index);
+		});
 		this.cards = [];
-		this.button.setVisible(true);
+	}
+
+	newRound() {
+		this.clearHand();
 		this.activeCardIndex = -1;
 
 		const countType = (type: string) =>
 			this.hand.filter((card) => card.type == type).length;
 		const isBadShuffle = () =>
-			countType(CardType.Move) < 2 || countType(CardType.Turn) < 2;
+			countType(CardType.Move) < this.minMoveCount ||
+			countType(CardType.Turn) < this.minTurnCount;
 
 		// Shuffle deck until there are 2+ turn and move
 		let limit = 999;
@@ -162,13 +175,19 @@ export class Deck extends Phaser.GameObjects.Container {
 
 		for (let i = 0; i < this.handSize; i++) {
 			let x = this.cardSlots[i].x;
-			let y = (1.5 + i) * this.scene.H;
+			let y = 1.5 * this.scene.H; // Spawn outside
 			let data = this.deck[i];
 			let card = new Card(this.scene, x, y, data.type, data.image, data.text);
 			card.setScale(1.1);
 			this.add(card);
 			this.cards.push(card);
+
+			card.addToGame(i);
 		}
+
+		this.scene.addEvent(2000, () => {
+			this.button.enabled = true;
+		});
 	}
 
 	updateState(state: State) {

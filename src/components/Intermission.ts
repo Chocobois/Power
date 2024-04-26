@@ -210,13 +210,13 @@ export class Intermission extends Phaser.GameObjects.Container {
 			duration: 500,
 			ease: Phaser.Math.Easing.Cubic.Out,
 			onComplete: () => {
-				this.button.setEnable(true);
+				this.button.enabled = true;
 			},
 		});
 	}
 
 	hideContent() {
-		this.button.setEnable(false);
+		this.button.enabled = false;
 
 		this.scene.tweens.add({
 			targets: [this.button, this.title, this.description],

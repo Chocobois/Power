@@ -54,7 +54,7 @@ export class GameScene extends BaseScene {
 		this.deck = new Deck(this);
 		this.deck.setDepth(2000);
 		this.deck.on("startExecuting", this.startExecuting, this);
-		this.deck.on("newRound", this.newRound, this);
+		this.deck.on("requestNewRound", this.newRound, this);
 		this.deck.on("action", this.performAction, this);
 
 		this.intermission = new Intermission(this);
@@ -114,7 +114,9 @@ export class GameScene extends BaseScene {
 		this.player.setCellSize(1.1 * this.grid.cellHeight);
 		this.player.angle = level.player.angle;
 
-		this.deck.startLevel(level);
+		this.addEvent(750, () => {
+			this.deck.startLevel(level);
+		});
 
 		this.rule.setRuleCard(level.rule);
 
@@ -135,7 +137,6 @@ export class GameScene extends BaseScene {
 
 		this.player.drain();
 		this.ui.setPower(this.player.power);
-
 		this.dj.setMoodPlanning();
 		this.dj.setMoodPower(this.player.power, this.player.maxPower);
 
@@ -145,6 +146,8 @@ export class GameScene extends BaseScene {
 			this.addEvent(1000, () => {
 				this.intermission.fadeToIntermission(this.player, Mode.RestartLevel);
 			});
+		} else {
+			this.deck.newRound();
 		}
 	}
 

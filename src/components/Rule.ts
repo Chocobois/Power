@@ -20,14 +20,18 @@ export class Rule extends Phaser.GameObjects.Container {
 		}
 	}
 
-	setRuleCard(rule: CardData) {
+	clearRuleCard() {
 		if (this.ruleCard) {
 			this.ruleCard.destroy();
 		}
+	}
+
+	setRuleCard(rule: CardData) {
+		this.clearRuleCard();
 
 		this.ruleCard = new Card(
 			this.scene,
-			180,
+			230,
 			330,
 			rule.type,
 			rule.image,

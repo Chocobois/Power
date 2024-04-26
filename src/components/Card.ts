@@ -92,13 +92,17 @@ export class Card extends Button {
 		this.dragOffset = new Phaser.Math.Vector2();
 		this.target = new Phaser.Math.Vector2(this.x, this.y);
 
-		this.bindInteractive(this.edges, this.type != CardType.Rule);
+		if (this.type != CardType.Rule) {
+			this.bindInteractive(this.edges);
+		}
 	}
 
 	update(time: number, delta: number) {
-		let f = this.hold ? 0.5 : 0.2;
-		this.x += f * (this.target.x - this.x);
-		this.y += f * (this.target.y - this.y);
+		if (this.enabled) {
+			let f = this.hold ? 0.5 : 0.2;
+			this.x += f * (this.target.x - this.x);
+			this.y += f * (this.target.y - this.y);
+		}
 
 		if (this.action == "turn_right") this.icon.angle += delta / 100;
 		if (this.action == "turn_left") this.icon.angle -= delta / 100;
@@ -125,8 +129,40 @@ export class Card extends Button {
 		this.setAlpha(value ? 1.0 : 0.4);
 	}
 
+	addToGame(index: number) {
+		this.enabled = false;
+
+		this.scene.tweens.add({
+			targets: this,
+			y: { from: this.y, to: this.target.y },
+			duration: 1000,
+			delay: index * 150,
+			ease: "Cubic.easeInOut",
+			onComplete: () => {
+				this.enabled = true;
+			},
+		});
+	}
+
+	removeFromGame(index: number) {
+		this.enabled = false;
+
+		this.scene.tweens.add({
+			targets: this,
+			x: "+=1500",
+			duration: 700,
+			delay: index * 100,
+			ease: "Cubic.easeInOut",
+			onComplete: () => {
+				this.destroy();
+			},
+		});
+	}
+
 	updateState(state: State) {
-		this.edges.input!.enabled = state == State.Planning;
+		if (this.edges.input) {
+			this.edges.input.enabled = state == State.Planning;
+		}
 	}
 
 	get color(): number {

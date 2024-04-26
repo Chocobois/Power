@@ -17,10 +17,10 @@ export class UI extends Phaser.GameObjects.Container {
 		this.panel = this.scene.add.container(0, 0);
 		this.add(this.panel);
 
-		this.background = this.scene.add.image(1750, 330, "battery");
+		this.background = this.scene.add.image(1700, 330, "battery");
 		this.add(this.background);
 
-		this.battery = this.scene.add.image(1750, 330, "battery_power");
+		this.battery = this.scene.add.image(1700, 330, "battery_power");
 		this.add(this.battery);
 	}
 
