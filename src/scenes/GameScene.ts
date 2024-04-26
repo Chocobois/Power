@@ -39,13 +39,11 @@ export class GameScene extends BaseScene {
 
 	create(): void {
 		this.fade(false, 200, 0x000000);
-		this.cameras.main.setBackgroundColor(Color.Slate100);
+		this.cameras.main.setBackgroundColor(Color.White);
 
-		// this.background = this.add.image(0, 0, "background");
-		// this.background.setOrigin(0);
-		// this.fitToScreen(this.background);
+		/* Managers */
 
-		this.grid = new Grid(this, this.CX, 400, 480);
+		this.grid = new Grid(this);
 		this.grid.on("complete", this.onLevelComplete, this);
 
 		this.player = new Player(this);
@@ -159,7 +157,7 @@ export class GameScene extends BaseScene {
 			case "move_forward_3":
 				let nextX = this.player.cell.x + dx;
 				let nextY = this.player.cell.y + dy;
-				if (this.grid.isAvailable(nextX, nextY)) {
+				if (this.grid.isAccessible(nextX, nextY)) {
 					this.player.cell.x = nextX;
 					this.player.cell.y = nextY;
 					this.player.move(
@@ -187,7 +185,7 @@ export class GameScene extends BaseScene {
 				dy *= -1;
 				let prevX = this.player.cell.x + dx;
 				let prevY = this.player.cell.y + dy;
-				if (this.grid.isAvailable(prevX, prevY)) {
+				if (this.grid.isAccessible(prevX, prevY)) {
 					this.player.cell.x = prevX;
 					this.player.cell.y = prevY;
 					this.player.move(

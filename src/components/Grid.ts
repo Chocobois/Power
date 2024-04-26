@@ -1,8 +1,13 @@
 import { GameScene } from "@/scenes/GameScene";
-import { Button } from "./elements/Button";
-import { Color } from "@/utils/colors";
 import { Level } from "../data/levels";
-import { Decoration } from "../data/decorations";
+import { Decoration, Decorations } from "../data/decorations";
+import { Collectible } from "./Collectible";
+
+interface Cell {
+	accessible: boolean;
+	decorated: boolean;
+	collectible?: Collectible;
+}
 
 export class Grid extends Phaser.GameObjects.Container {
 	public scene: GameScene;
@@ -11,25 +16,26 @@ export class Grid extends Phaser.GameObjects.Container {
 	public columns: number;
 	public cellWidth: number;
 	public cellHeight: number;
-	public available: boolean[][];
-	private cells: Phaser.GameObjects.Rectangle[][];
+
+	private grid: Phaser.GameObjects.Grid;
+	private cellData: Cell[][];
 	private decorations: Phaser.GameObjects.Image[];
-	private remainingTiles: number;
 
 	// Sprites
 	private outside: Phaser.GameObjects.TileSprite;
 	private floor: Phaser.GameObjects.TileSprite;
 	private walls: Phaser.GameObjects.NineSlice;
-	private grid: Phaser.GameObjects.Grid;
 
-	constructor(scene: GameScene, x: number, y: number, height: number) {
-		super(scene, x, y);
+	constructor(scene: GameScene) {
+		super(scene, scene.CX, 400);
 		scene.add.existing(this);
 		this.scene = scene;
 
+		/* Grid */
+
 		this.columns = 1;
 		this.rows = 1;
-		this.height = height;
+		this.height = 480;
 		this.width = this.height * (this.rows / this.columns) * (4 / 3);
 		this.cellWidth = this.width / this.rows;
 		this.cellHeight = this.height / this.columns;
@@ -47,14 +53,20 @@ export class Grid extends Phaser.GameObjects.Container {
 			1.0
 		);
 		this.add(this.grid);
+		this.grid.setVisible(false);
 
-		this.available = [];
+		this.cellData = [];
 		for (let y = 0; y < this.columns; y++) {
-			this.available[y] = [];
+			this.cellData[y] = [];
 			for (let x = 0; x < this.rows; x++) {
-				this.available[y].push(true);
+				this.cellData[y][x] = {
+					accessible: true,
+					decorated: false,
+				};
 			}
 		}
+
+		/* Tile sprites */
 
 		this.outside = this.scene.add.tileSprite(
 			scene.CX - this.x,
@@ -76,9 +88,6 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.floor.setScale(this.cellWidth / 256);
 		this.add(this.floor);
 
-		this.decorations = [];
-		this.cells = [[]];
-
 		this.walls = scene.add.nineslice(
 			0,
 			-this.cellHeight / 2,
@@ -94,17 +103,25 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.walls.setScale(this.cellWidth / 256);
 		this.add(this.walls);
 
-		// let foreground = this.scene.add.image(0, 0, "room");
-		// let foreground = this.scene.add.image(this.x, this.y, "room");
-		// foreground.setDepth(10);
-		// this.add(foreground);
+		/* Objects */
+
+		this.decorations = [];
 	}
 
-	update(time: number, delta: number) {}
+	update(time: number, delta: number) {
+		this.cellData.forEach((row) =>
+			row.forEach((cell) => {
+				if (cell.collectible) {
+					cell.collectible.update(time, delta);
+				}
+			})
+		);
+	}
 
 	startLevel(level: Level) {
 		this.columns = level.grid.length;
 		this.rows = level.grid[0].length;
+		this.height = Math.min(120 * this.columns, 480);
 		this.width = this.height * (this.rows / this.columns) * (4 / 3);
 		this.cellWidth = this.width / this.rows;
 		this.cellHeight = this.height / this.columns;
@@ -114,56 +131,62 @@ export class Grid extends Phaser.GameObjects.Container {
 		this.grid.cellWidth = this.cellWidth;
 		this.grid.cellHeight = this.cellHeight;
 
-		this.available = [];
+		this.cellData.forEach((row) =>
+			row.forEach((cell) => {
+				if (cell.collectible) cell.collectible.removeFromGame(false);
+			})
+		);
+		this.cellData = [];
 		for (let y = 0; y < this.columns; y++) {
-			this.available[y] = [];
+			this.cellData[y] = [];
 			for (let x = 0; x < this.rows; x++) {
-				this.available[y].push(true);
+				this.cellData[y][x] = {
+					accessible: true,
+					decorated: false,
+				};
+
+				if (level.grid[y][x] == 1) {
+					this.cellData[y][x].accessible = false;
+					this.clean(x, y);
+				}
+
+				if (level.grid[y][x] == 2) {
+					this.addCollectible(x, y);
+				}
 			}
 		}
 
-		this.outside.width = (this.scene.W / this.cellWidth) * 256;
-		this.outside.height = (this.scene.H / this.cellHeight) * 192;
+		let pos = this.getPosition(0, 0);
+		this.outside.x = pos.x - this.x;
+		this.outside.y = pos.y - this.y;
+		this.outside.width = 256 * 29;
+		this.outside.height = 192 * 29;
 		this.outside.setScale(this.cellWidth / 256);
 
 		this.floor.width = this.rows * 256;
 		this.floor.height = this.columns * 192;
 		this.floor.setScale(this.cellWidth / 256);
 
-		this.remainingTiles = this.rows * this.columns;
-
-		this.cells.forEach((row) => row.forEach((cell) => cell.destroy()));
-		this.cells = [];
-		for (let y = 0; y < this.columns; y++) {
-			this.cells[y] = [];
-			for (let x = 0; x < this.rows; x++) {
-				let pos = this.getPosition(x, y);
-				let rect = this.scene.add.rectangle(
-					pos.x - this.x,
-					pos.y - this.y,
-					this.cellWidth,
-					this.cellHeight,
-					Color.Amber800,
-					0.25
-				);
-				this.cells[y].push(rect);
-				this.add(rect);
-
-				if (level.grid[y][x] == 1) {
-					this.block(x, y);
-				}
-			}
-		}
-
 		this.walls.y = -this.cellHeight / 2;
 		this.walls.width = (this.rows + 2) * 256;
 		this.walls.height = (this.columns + 3) * 192;
 		this.walls.setScale(this.cellWidth / 256);
 
+		// Decorations
 		this.decorations.forEach((decor) => decor.destroy());
+		this.decorations = [];
 		level.decoration.forEach((decor) => {
 			this.addDecoration(decor.x - 1, decor.y - 1, decor.item);
 		});
+
+		// Check for blocked tiles that are not decorated
+		this.cellData.forEach((row, cy) =>
+			row.forEach((cell, cx) => {
+				if (cell.accessible == cell.decorated) {
+					this.addDecoration(cx, cy, Decorations.Box);
+				}
+			})
+		);
 	}
 
 	getPosition(x: number, y: number) {
@@ -174,26 +197,7 @@ export class Grid extends Phaser.GameObjects.Container {
 		);
 	}
 
-	block(cx: number, cy: number) {
-		this.available[cy][cx] = false;
-		this.cells[cy][cx].fillColor = Color.Red500;
-		this.cells[cy][cx].fillAlpha = 1;
-		this.clean(cx, cy);
-	}
-
 	addDecoration(cx: number, cy: number, decor: Decoration) {
-		// Remove debug visualization
-		for (let dx = 0; dx < decor.width; dx++)
-			for (let dy = 0; dy < decor.height; dy++)
-				if (this.isInside(cx + dx, cy - dy)) {
-					let cell = this.cells[cy - dy][cx + dx];
-					console.assert(
-						cell.fillAlpha == 1,
-						`Decoration placed on free tile (${cx},${cy})`
-					);
-					cell.fillAlpha = 0;
-				}
-
 		const pos = this.getPosition(cx, cy);
 		let item = this.scene.add.image(pos.x, pos.y, decor.key);
 		item.setDepth(pos.y);
@@ -204,14 +208,33 @@ export class Grid extends Phaser.GameObjects.Container {
 		item.setOrigin(ox, oy);
 
 		this.decorations.push(item);
+
+		for (let dx = 0; dx < decor.width; dx++)
+			for (let dy = 0; dy < decor.height; dy++)
+				this.cellData[cy + dy][cx + dx].decorated = true;
+	}
+
+	addCollectible(cx: number, cy: number) {
+		let pos = this.getPosition(cx, cy);
+		let item = new Collectible(
+			this.scene,
+			pos.x,
+			pos.y,
+			0.75 * this.cellHeight
+		);
+		this.cellData[cy][cx].collectible = item;
 	}
 
 	clean(cx: number, cy: number) {
-		if (this.cells[cy][cx].fillColor != Color.White) {
-			this.cells[cy][cx].fillColor = Color.White;
+		let item = this.cellData[cy][cx].collectible;
+		if (item) {
+			item.removeFromGame(true);
+			this.cellData[cy][cx].collectible = undefined;
 
-			this.remainingTiles -= 1;
-			if (this.remainingTiles <= 0) {
+			let complete = this.cellData.every((row) =>
+				row.every((cell) => !cell.collectible)
+			);
+			if (complete) {
 				this.emit("complete");
 			}
 		}
@@ -221,7 +244,7 @@ export class Grid extends Phaser.GameObjects.Container {
 		return cx >= 0 && cx < this.rows && cy >= 0 && cy < this.columns;
 	}
 
-	isAvailable(cx: number, cy: number) {
-		return this.isInside(cx, cy) && this.available[cy][cx];
+	isAccessible(cx: number, cy: number) {
+		return this.isInside(cx, cy) && this.cellData[cy][cx].accessible;
 	}
 }
