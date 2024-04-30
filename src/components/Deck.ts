@@ -53,17 +53,29 @@ export class Deck extends Phaser.GameObjects.Container {
 		this.button.alpha += 0.1 * (buttonAlpha - this.button.alpha);
 		this.button.setScale(1.0 - 0.1 * this.button.holdSmooth);
 
+		// Sort cards over x. This will also change their targeted card slot.
 		this.cards.sort((a, b) => a.x - b.x);
 		this.cards.forEach((card) => this.bringToTop(card));
+
+		// Card update loop
 		this.cards.forEach((card, index) => {
+			// Move non-held cards to their slots
 			if (!card.hold) {
 				card.target.x = this.cardSlots[index].x;
 			}
-			let k = (card.x - this.scene.CX) / this.scene.CX;
-			card.angle = k * 20;
-			card.angle -= 1 * Math.sin(time / 1000 + card.x / 300);
-			card.target.y = 880 - 50 * Math.cos(k * Math.PI);
+
+			// Distance from center
+			let centerOffset = (card.x - this.scene.CX) / this.scene.CX;
+
+			// Set card height and rotation
+			card.target.y = 880 - 50 * Math.cos(centerOffset * Math.PI);
+			card.angle = 20 * centerOffset;
+
+			// Add soft irregular animation
 			card.target.y += 4 * Math.sin(time / 1000 + card.x / 200);
+			card.angle -= 1 * Math.sin(time / 1000 + card.x / 300);
+
+			// Highlight held card
 			if (card.hold || card.highlighted) {
 				this.bringToTop(card);
 				card.target.y -= 100;
