@@ -21,8 +21,7 @@ export const level1: Level = {
 		[1, 0, 2],
 	],
 	decoration: [
-		{ x: 3, y: 1, item: Decorations.Plant },
-		{ x: 1, y: 3, item: Decorations.Plant },
+		{ x: 1, y: 1, item: Decorations.Plant },
 	],
 	deck: [
 		Cards.MoveForward,
@@ -33,7 +32,7 @@ export const level1: Level = {
 		Cards.TurnRight,
 		Cards.MoveForward2,
 	],
-	minMove: 2,
+	minMove: 3,
 	minTurn: 1,
 	rule: Rules.TurnLeft,
 	player: {
@@ -45,14 +44,15 @@ export const level1: Level = {
 };
 
 export const level2: Level = {
-	cards: 5,
+	cards: 4,
 	grid: [
 		[1, 2, 1, 1],
 		[0, 0, 0, 2],
 		[1, 2, 2, 1],
 	],
 	decoration: [
-		{ x: 1, y: 3, item: Decorations.Plant },
+		{ x: 1, y: 1, item: Decorations.Plant },
+		{ x: 4, y: 3, item: Decorations.Plant },
 		{ x: 3, y: 1, item: Decorations.Desk },
 	],
 	deck: [
@@ -65,8 +65,8 @@ export const level2: Level = {
 		Cards.MoveForward2,
 		Cards.MoveBackward,
 	],
-	minMove: 2,
-	minTurn: 2,
+	minMove: 3,
+	minTurn: 1,
 	rule: Rules.TurnAround,
 	player: {
 		x: 1,
