@@ -33,7 +33,7 @@ export const level1: Level = {
 		Cards.TurnRight,
 		Cards.MoveForward2,
 	],
-	minMove: 3,
+	minMove: 2,
 	minTurn: 1,
 	rule: Rules.TurnLeft,
 	player: {
@@ -45,11 +45,11 @@ export const level1: Level = {
 };
 
 export const level2: Level = {
-	cards: 4,
+	cards: 5,
 	grid: [
 		[1, 2, 1, 1],
-		[0, 0, 2, 0],
-		[1, 2, 1, 2],
+		[0, 0, 0, 2],
+		[1, 2, 2, 1],
 	],
 	decoration: [
 		{ x: 1, y: 3, item: Decorations.Plant },
